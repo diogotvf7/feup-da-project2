@@ -15,6 +15,9 @@ Edge::Edge(Node* src, Node* dest, const int &value) {
 
 int Edge::getValue() const {return value;}
 
+Node* Edge::getSrc() const {return src;}
+
+Node* Edge::getDest() const {return dest;}
 
 Node::Node(const int &idNode, const string &label) {
     this->idNode = idNode;
@@ -39,4 +42,12 @@ Edge* Node::addEdge(Node* dest, int &edgeValue) {
     dest->incoming.push_back(newEdge);
 
     return newEdge;
+}
+
+void Node::setVisited(bool status) {
+    this->visited = status;
+}
+
+bool Node::isVisited() {
+    return visited;
 }

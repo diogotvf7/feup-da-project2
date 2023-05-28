@@ -21,6 +21,8 @@ public:
     Edge* addEdge(Node* dest,  int &edgeValue);
     std::vector<Edge*> getAdj() const;
     std::vector<Edge*> getIncoming() const;
+    void setVisited(bool status);
+    bool isVisited();
 };
 
 class Edge {
@@ -30,6 +32,8 @@ class Edge {
 public:
     Edge(Node* src, Node* dest, const int &value);
     int getValue() const;
+    Node* getSrc() const;
+    Node* getDest() const;
 };
 
 
