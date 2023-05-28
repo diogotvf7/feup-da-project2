@@ -1,3 +1,0 @@
-C:/Users/Jaime/Desktop/projeto-da/cmake-build-debug/CMakeFiles/projeto_da.dir
-C:/Users/Jaime/Desktop/projeto-da/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/Jaime/Desktop/projeto-da/cmake-build-debug/CMakeFiles/rebuild_cache.dir
