@@ -1,31 +1,39 @@
-//
-// Created by Jaime on 28/05/2023.
-//
-
 #include "../headers/NodeEdge.h"
-
 
 using namespace std;
 
-Edge::Edge(Node* src, Node* dest, const int &value) {
+Edge::Edge(Node* src, Node* dest, const double &dist) {
     this->src = src;
     this->dest = dest;
-    this->value = value;
+    this->dist = dist;
 }
 
-int Edge::getValue() const {return value;}
+double Edge::getDist() const {return dist;}
 
 Node* Edge::getSrc() const {return src;}
 
 Node* Edge::getDest() const {return dest;}
 
-Node::Node(const int &idNode, const string &label) {
-    this->idNode = idNode;
+Node::Node(const int &id) {
+    this->id = id;
+    this->coord = Coordinate();
+    this->label = "";
+}
+
+Node::Node(const int &id, Coordinate coord) {
+    this->id = id;
+    this->coord = coord;
+    this->label = "";
+}
+
+Node::Node(const int &id, const std::string &label) {
+    this->id = id;
+    this->coord = Coordinate();
     this->label = label;
 }
 
-int Node::getNodeId() const {
-    return idNode;
+int Node::getId() const {
+    return id;
 }
 
 std::vector<Edge*> Node::getAdj() const {
@@ -36,18 +44,29 @@ std::vector<Edge*> Node::getIncoming() const {
     return incoming;
 }
 
-Edge* Node::addEdge(Node* dest, int &edgeValue) {
-    Edge* newEdge = new Edge(this, dest, edgeValue);
-    adj.push_back(newEdge);
-    dest->incoming.push_back(newEdge);
+Edge* Node::insertEdge(Node* dest, int &dist) {
+    Edge* e = new Edge(this, dest, dist);
+    adj.push_back(e);
+    dest->incoming.push_back(e);
 
-    return newEdge;
+    return e;
 }
 
 void Node::setVisited(bool status) {
     this->visited = status;
 }
 
-bool Node::isVisited() {
+bool Node::isVisited() const {
     return visited;
+}
+
+bool Node::connectedTo(int dest) const {
+    return getEdge(dest) != nullptr;
+}
+
+Edge *Node::getEdge(int dest) const {
+    for (Edge* edge : adj)
+        if (edge->getDest()->getId() == dest)
+            return edge;
+    return nullptr;
 }

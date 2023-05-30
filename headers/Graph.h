@@ -1,29 +1,26 @@
-//
-// Created by Jaime on 27/05/2023.
-//
-
 #ifndef PROJETO_DA_GRAPH_H
 #define PROJETO_DA_GRAPH_H
 
 #include <vector>
+#include <unordered_map>
 #include "NodeEdge.h"
+
 #define INF INT16_MAX
+#define node_map std::unordered_map<int, Node*>
 
 class Graph {
-    std::vector<Node*> nodes;
+    node_map nodes;
+
 public:
     Node* findNode(const int &idNode) const;
     void addNode(Node* node);
-    void removeNode(const int &idNode);
-    std::vector<Node*> getNodes() const;
-    bool connectedToStart(Node* currentNode);
-    int getEdgeWeightFromTwoNodes(Node* node1, Node* node2);
-    void addEdge(const int &originNodeId, const int &destinyNodeId,  int edgeValue) const;
+    node_map getNodes() const;
+    void createEdge(const int &src, const int &dest, int dist) const;
+    void resetGraph();
 
     /*First Exercise*/
     std::vector<int> tspBacktracking();
-    void backtrack(Node* currentNode, std::vector<int> &path, int currentCost, std::vector<int> &bestPath, int &bestCost);
+    void backtrack(Node* currentNode, std::vector<int> &path, double currentCost, std::vector<int> &bestPath, double &bestCost);
 };
-
 
 #endif //PROJETO_DA_GRAPH_H
