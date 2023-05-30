@@ -11,27 +11,42 @@ class Edge;
 
 class Node {
     int idNode;
+
+    int queueIndex = 0;
+    double dist = 0;
+
     std::vector<Edge*> adj;
     std::vector<Edge*> incoming;
     bool visited = false;
+    Edge* path = nullptr; //needed for prim's algorithm
     std::string label;
 public:
     Node(const int &idNode, const std::string &label = "");
-    int getNodeId() const;
-    Edge* addEdge(Node* dest,  int &edgeValue);
+    bool operator<(Node & node) const;
+
+    Edge* addEdge(Node* dest,  double &edgeValue);
+
+    bool isVisited() const;
     std::vector<Edge*> getAdj() const;
     std::vector<Edge*> getIncoming() const;
+    int getNodeId() const;
+    int getQueueIndex() const;
+    Edge* getPath() const;
+    double getDist() const;
+
+    void setPath(Edge* newPath);
+    void setQueueIndex(int queueIndex);
     void setVisited(bool status);
-    bool isVisited();
+    void setDist(int distance);
 };
 
 class Edge {
     Node* src;
     Node* dest;
-    int value;
+    double value;
 public:
-    Edge(Node* src, Node* dest, const int &value);
-    int getValue() const;
+    Edge(Node* src, Node* dest, const double &value);
+    double getValue() const;
     Node* getSrc() const;
     Node* getDest() const;
 };

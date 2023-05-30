@@ -9,7 +9,7 @@ using namespace std;
 namespace utils{
 
     void readToyGraphs(const std::string &path, Graph *graph){
-        string folderPath = "C:\\Users\\Jaime\\Desktop\\projeto-da\\dataset\\Toy-Graphs\\";
+        string folderPath = "C:\\Users\\Jaime\\Desktop\\desenho-algoritmos\\dataset\\Toy-Graphs\\";
 
         ifstream csv(folderPath + path);
         string buffer;
@@ -40,7 +40,7 @@ namespace utils{
 
             graph->addNode(nodeOrigin);
             graph->addNode(nodeDestiny);
-            graph->addEdge(stoi(nodeIdOrigin), stoi(nodeIdDestiny), stoi(edgeValue));
+            graph->addEdge(stoi(nodeIdOrigin), stoi(nodeIdDestiny), stod(edgeValue));
         }
     }
 }
