@@ -64,7 +64,7 @@ void Node::setQueueIndex(int newQueueIndex) {
     this->queueIndex = newQueueIndex;
 }
 
-void Node::setDist(int distance) {this->dist = distance;}
+void Node::setDist(double distance) {this->dist = distance;}
 
 void Node::setPath(Edge *newPath) {this->path = newPath;}
 

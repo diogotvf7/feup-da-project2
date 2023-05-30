@@ -7,7 +7,7 @@ using namespace utils;
 
 int main(){
     Graph *graph = new Graph();
-    readToyGraphs("shipping.csv", graph);
+    readToyGraphs("stadiums.csv", graph);
     double cost = 0;
     double bestCost = INF;
 
