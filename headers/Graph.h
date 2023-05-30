@@ -1,9 +1,10 @@
-#ifndef PROJETO_DA_GRAPH_H
-#define PROJETO_DA_GRAPH_H
+#ifndef GRAPH_H
+#define GRAPH_H
 
 #include <vector>
 #include <unordered_map>
 #include "NodeEdge.h"
+#include "MutablePriorityQueue.h"
 
 #define INF INT16_MAX
 #define node_map std::unordered_map<int, Node*>
@@ -12,15 +13,19 @@ class Graph {
     node_map nodes;
 
 public:
-    Node* findNode(const int &idNode) const;
-    void addNode(Node* node);
+    Node *findNode(const int &idNode) const;
+    void addNode(Node *node);
     node_map getNodes() const;
-    void createEdge(const int &src, const int &dest, int dist) const;
-    void resetGraph();
+    void createEdge(const int &src, const int &dest, double dist) const;
 
     /*First Exercise*/
-    std::vector<int> tspBacktracking();
-    void backtrack(Node* currentNode, std::vector<int> &path, double currentCost, std::vector<int> &bestPath, double &bestCost);
+    std::vector<int> tspBacktracking(double &bestCost);
+    void backtrack(Node *currentNode, std::vector<int> &path, double currentCost, std::vector<int> &bestPath, double &bestCost);
+
+    /*Second Exercise*/
+    std::vector<Edge*> prim();
+    void preOrderWalk(Node *node, std::vector<int> &tour, double &cost);
+    std::vector<int> approxTSPTour(double &cost);
 };
 
-#endif //PROJETO_DA_GRAPH_H
+#endif //GRAPH_H

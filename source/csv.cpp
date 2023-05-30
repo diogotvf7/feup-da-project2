@@ -52,7 +52,7 @@ namespace csv {
 
             graph->addNode(src);
             graph->addNode(dest);
-            graph->createEdge(stoi(_src), stoi(_dest), stoi(_dist));
+            graph->createEdge(stoi(_src), stoi(_dest), stod(_dist));
         }
     }
 }

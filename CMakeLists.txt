@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
 project(projeto_da)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 add_executable(projeto_da
         dataset/real-graphs/graph1/nodes.csv
@@ -36,4 +36,8 @@ add_executable(projeto_da
         headers/NodeEdge.h
         source/NodeEdge.cpp
         headers/Coordinate.h
-        source/Coordinate.cpp)
+        source/Coordinate.cpp
+        headers/MutablePriorityQueue.h
+        source/MutablePriorityQueue.cpp
+        )
+

@@ -2,17 +2,7 @@
 
 using namespace std;
 
-Edge::Edge(Node* src, Node* dest, const double &dist) {
-    this->src = src;
-    this->dest = dest;
-    this->dist = dist;
-}
-
-double Edge::getDist() const {return dist;}
-
-Node* Edge::getSrc() const {return src;}
-
-Node* Edge::getDest() const {return dest;}
+/*                              Node                              */
 
 Node::Node(const int &id) {
     this->id = id;
@@ -31,9 +21,31 @@ Node::Node(const int &id, const std::string &label) {
     this->coord = Coordinate();
     this->label = label;
 }
-
 int Node::getId() const {
     return id;
+}
+
+bool Node::isVisited() const {
+    return visited;
+}
+
+double Node::getDist() const {
+    return dist;
+}
+
+int Node::getQueueIndex() const {
+    return queueIndex;
+}
+
+Edge* Node::getPath() const {
+    return path;
+}
+
+Edge *Node::getEdge(int dest) const {
+    for (Edge *edge: adj)
+        if (edge->getDest()->getId() == dest)
+            return edge;
+    return nullptr;
 }
 
 std::vector<Edge*> Node::getAdj() const {
@@ -44,29 +56,56 @@ std::vector<Edge*> Node::getIncoming() const {
     return incoming;
 }
 
-Edge* Node::insertEdge(Node* dest, int &dist) {
-    Edge* e = new Edge(this, dest, dist);
+void Node::setVisited(bool status) {
+    this->visited = status;
+}
+
+void Node::setDist(double distance) {
+    this->dist = distance;
+}
+
+void Node::setQueueIndex(int newQueueIndex) {
+    this->queueIndex = newQueueIndex;
+}
+
+void Node::setPath(Edge *newPath) {
+    this->path = newPath;
+}
+
+Edge* Node::insertEdge(Node* dest, double &distance) {
+    Edge* e = new Edge(this, dest, distance);
     adj.push_back(e);
     dest->incoming.push_back(e);
 
     return e;
 }
 
-void Node::setVisited(bool status) {
-    this->visited = status;
-}
-
-bool Node::isVisited() const {
-    return visited;
-}
-
 bool Node::connectedTo(int dest) const {
     return getEdge(dest) != nullptr;
 }
 
-Edge *Node::getEdge(int dest) const {
-    for (Edge* edge : adj)
-        if (edge->getDest()->getId() == dest)
-            return edge;
-    return nullptr;
+bool Node::operator<(Node & node) const {
+    return this->dist < node.dist;
 }
+
+/*                              Edge                              */
+
+Edge::Edge(Node* src, Node* dest, const double &dist) {
+    this->src = src;
+    this->dest = dest;
+    this->dist = dist;
+}
+
+double Edge::getDist() const {
+    return dist;
+}
+
+Node* Edge::getSrc() const {
+    return src;
+}
+
+Node* Edge::getDest() const {
+    return dest;
+}
+
+

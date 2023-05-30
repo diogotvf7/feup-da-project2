@@ -1,5 +1,5 @@
-#ifndef PROJETO_DA_NODEEDGE_H
-#define PROJETO_DA_NODEEDGE_H
+#ifndef NODE_EDGE_H
+#define NODE_EDGE_H
 
 #include <iostream>
 #include <vector>
@@ -12,6 +12,9 @@ class Node {
     Coordinate coord;
     std::string label;
 
+    int queueIndex = 0;
+    double dist = 0;
+    Edge* path = nullptr; //needed for prim's algorithm
     std::vector<Edge*> adj;
     std::vector<Edge*> incoming;
     bool visited = false;
@@ -20,26 +23,34 @@ public:
     explicit Node(const int &id);
     explicit Node(const int &id, Coordinate coord);
     explicit Node(const int &id, const std::string &label);
-    int getId() const;
-    Edge* insertEdge(Node* dest, int &edgeValue);
-    std::vector<Edge*> getAdj() const;
-    std::vector<Edge*> getIncoming() const;
+
+    [[nodiscard]] int getId() const;
+    [[nodiscard]] bool isVisited() const;
+    [[nodiscard]] double getDist() const;
+    [[nodiscard]] int getQueueIndex() const;
+    [[nodiscard]] Edge *getPath() const;
+    [[nodiscard]] Edge *getEdge(int dest) const;
+    [[nodiscard]] std::vector<Edge*> getAdj() const;
+    [[nodiscard]] std::vector<Edge*> getIncoming() const;
     void setVisited(bool status);
-    bool isVisited() const;
-    Edge *getEdge(int dest) const;
-    bool connectedTo(int id) const;
+    void setDist(double distance);
+    void setQueueIndex(int queueIndex);
+    void setPath(Edge *newPath);
+    Edge* insertEdge(Node *dest, double &distance);
+    [[nodiscard]] bool connectedTo(int id) const;
+    bool operator<(Node &node) const;
 };
 
 class Edge {
-    Node* src;
-    Node* dest;
+    Node *src;
+    Node *dest;
     double dist;
 
 public:
-    Edge(Node* src, Node* dest, const double &dist);
-    double getDist() const;
-    Node* getSrc() const;
-    Node* getDest() const;
+    Edge(Node *src, Node *dest, const double &dist);
+    [[nodiscard]] double getDist() const;
+    [[nodiscard]] Node *getSrc() const;
+    [[nodiscard]] Node *getDest() const;
 };
 
-#endif //PROJETO_DA_NODEEDGE_H
+#endif //NODE_EDGE_H
