@@ -15,4 +15,4 @@ add_executable(projeto_da
         dataset/Toy-Graphs/tourism.csv
         main.cpp
         main.exe
-        README.md source/Utils.cpp headers/Utils.h source/Graph.cpp headers/Graph.h headers/NodeEdge.h source/NodeEdge.cpp)
+        README.md source/Utils.cpp headers/Utils.h source/Graph.cpp headers/Graph.h headers/NodeEdge.h source/NodeEdge.cpp  headers/MutablePriorityQueue.h source/MutablePriorityQueue.cpp)
