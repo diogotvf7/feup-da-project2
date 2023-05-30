@@ -75,7 +75,7 @@ void Graph::backtrack(Node* currentNode, std::vector<int> &path, double currentC
     if(allNodesVisited && connectedToStart(currentNode)){
         if((currentCost + getEdgeWeightFromTwoNodes(currentNode, findNode(0)) ) < bestCost){
             bestPath = path;
-            bestCost = currentCost;
+            bestCost = currentCost + getEdgeWeightFromTwoNodes(currentNode, findNode(0));
         }
     }
 
@@ -92,9 +92,9 @@ void Graph::backtrack(Node* currentNode, std::vector<int> &path, double currentC
 }
 
 
-vector<Edge*> Graph::prim() {
+void Graph::prim() {
     vector<Edge*> res;
-    if(nodes.empty()) return res;
+    if(nodes.empty()) return;
 
     for(Node* node : nodes){
         node->setDist(INF);
@@ -129,12 +129,6 @@ vector<Edge*> Graph::prim() {
         }
     }
 
-    for(Node* node : nodes){
-        if(node->getPath() != nullptr){
-            res.push_back(node->getPath());
-        }
-    }
-    return res;
 }
 
 void Graph::preOrderWalk(Node* node, std::vector<int>& tour, double &cost) {
