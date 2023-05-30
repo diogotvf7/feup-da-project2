@@ -22,7 +22,7 @@ public:
 
     /*First Exercise*/
     std::vector<int> tspBacktracking(double &bestCost);
-    void backtrack(Node* currentNode, std::vector<int> &path, int currentCost, std::vector<int> &bestPath, double &bestCost);
+    void backtrack(Node* currentNode, std::vector<int> &path, double currentCost, std::vector<int> &bestPath, double &bestCost);
 
     /*Second Exercise*/
     std::vector<Edge*> prim();

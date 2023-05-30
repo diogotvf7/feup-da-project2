@@ -9,7 +9,7 @@ using namespace std;
 namespace utils{
 
     void readToyGraphs(const std::string &path, Graph *graph){
-        string folderPath = "C:\\Users\\Jaime\\Desktop\\desenho-algoritmos\\dataset\\Toy-Graphs\\";
+        string folderPath = "dataset/Toy-Graphs/";
 
         ifstream csv(folderPath + path);
         string buffer;

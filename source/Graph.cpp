@@ -58,7 +58,7 @@ vector<int> Graph::tspBacktracking(double &bestCost){
     //Node with id 0 is always our beginning and end
     Node* start = findNode(0);
     start->setVisited(true);
-    path.push_back(start->getNodeId());
+    path.push_back(0);
 
     backtrack(start, path, 0, bestPath, bestCost);
     bestPath.push_back(0);
@@ -66,7 +66,7 @@ vector<int> Graph::tspBacktracking(double &bestCost){
     return bestPath;
 }
 
-void Graph::backtrack(Node* currentNode, std::vector<int> &path, int currentCost, std::vector<int> &bestPath, double &bestCost){
+void Graph::backtrack(Node* currentNode, std::vector<int> &path, double currentCost, std::vector<int> &bestPath, double &bestCost){
 
     bool allNodesVisited = true;
     for(Node* node : nodes){

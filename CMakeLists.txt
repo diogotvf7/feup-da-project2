@@ -1,14 +1,9 @@
 cmake_minimum_required(VERSION 3.23)
-project(projeto_da)
+project(DA-Project2)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(projeto_da
-        .idea/.gitignore
-        .idea/modules.xml
-        .idea/projeto-da.iml
-        .idea/vcs.xml
-        .idea/workspace.xml
+add_executable(DA-Project2
         .vscode/tasks.json
         dataset/Toy-Graphs/shipping.csv
         dataset/Toy-Graphs/stadiums.csv
