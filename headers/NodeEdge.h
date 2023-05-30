@@ -37,7 +37,7 @@ public:
     void setPath(Edge* newPath);
     void setQueueIndex(int queueIndex);
     void setVisited(bool status);
-    void setDist(int distance);
+    void setDist(double distance);
 };
 
 class Edge {

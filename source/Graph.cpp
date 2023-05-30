@@ -143,9 +143,9 @@ void Graph::preOrderWalk(Node* node, std::vector<int>& tour, double &cost) {
         Node* neighbor = edge->getDest();
         if(neighbor->getPath() != nullptr){
             if(neighbor->getPath()->getSrc() == node){
-                cost += edge->getValue();
+                //cost += edge->getValue();
                 tour.push_back(neighbor->getNodeId());
-                preOrderWalk    (neighbor, tour, cost);
+                preOrderWalk(neighbor, tour, cost);
 
             }
         }
@@ -156,9 +156,14 @@ vector<int> Graph::approxTSPTour(double &cost){
     vector<int> tour;
     this->prim();
     for(Node* node : nodes) node->setVisited(false);
+
     tour.push_back(0);
     preOrderWalk(findNode(0), tour, cost);
     tour.push_back(0);
+
+    for(int i = 0; i < (tour.size() - 1); i++){
+        cost += getEdgeWeightFromTwoNodes(findNode(tour[i]), findNode(tour[i + 1]));
+    }
     return tour;
 }
 
