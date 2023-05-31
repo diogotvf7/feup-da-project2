@@ -107,5 +107,3 @@ Node* Edge::getSrc() const {
 Node* Edge::getDest() const {
     return dest;
 }
-
-

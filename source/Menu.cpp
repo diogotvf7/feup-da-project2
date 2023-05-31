@@ -95,7 +95,9 @@ bool Menu::selectGraph(const int headerIdx) {
                 alive = false;
                 break;
             default:
-                displayInfo(headerIdx, options[stoi(input)]);
+                std::cout << "alive: " << alive << std::endl;
+                alive = displayInfo(headerIdx, options[stoi(input)]);
+                std::cout << "alive: " << alive << std::endl;
                 break;
         }
     }
@@ -105,18 +107,18 @@ bool Menu::displayInfo(const int headerIdx, const std::string &path) {
     std::vector<int> res;
     long elapsedTime;
     double bestDist, dist;
+    std::cout << "here!" << std::endl;
     switch (headerIdx) {
-        case 0:
+        case 1:
             res = measureExecutionTime(elapsedTime, &Graph::tspBacktracking, *graphs[path], bestDist);
             break;
-        case 1:
+        case 2:
             res = measureExecutionTime(elapsedTime, &Graph::approxTSPTour, *graphs[path], dist);;
             break;
-        case 2:
+        case 3:
             // TODO
             break;
     }
-
     bool alive = true;
     while (alive) {
         cleanTerminal();
@@ -145,16 +147,19 @@ bool Menu::displayInfo(const int headerIdx, const std::string &path) {
                   << '|' << std::string(100, '-') << '|' << std::endl
                   << std::right << std::setw(20) << "Option: ";
         std::cin >> input;
-        switch (stoi(input)) {
-            case 1:
-                // TODO
-                // displayPath(res, path);
-                break;
-            case 2:
-                return true;
-            default:
-                std::cout << "Invalid option!" << std::endl;
-                break;
+        while (true) {
+            switch (stoi(input)) {
+                case 1:
+                    // TODO
+                    // displayPath(res, path);
+                    break;
+                case 2:
+                    return true;
+                default:
+                    std::cout << "Invalid option!" << std::endl;
+                    std::cin >> input;
+                    break;
+            }
         }
     }
 }

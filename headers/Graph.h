@@ -25,7 +25,7 @@ public:
     void backtrack(Node *currentNode, std::vector<int> &path, double currentCost, std::vector<int> &bestPath, double &bestCost);
 
     /*Second Exercise*/
-    std::vector<Edge*> prim();
+    void prim();
     void preOrderWalk(Node *node, std::vector<int> &tour, double &cost);
     std::vector<int> approxTSPTour(double &cost);
 };

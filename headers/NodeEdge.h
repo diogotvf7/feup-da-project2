@@ -7,6 +7,7 @@
 
 class Edge;
 
+/*                                     Node                                      */
 class Node {
     int id;
     Coordinate coord;
@@ -41,6 +42,7 @@ public:
     bool operator<(Node &node) const;
 };
 
+/*                                     Edge                                      */
 class Edge {
     Node *src;
     Node *dest;

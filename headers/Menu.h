@@ -24,7 +24,7 @@ public:
 
     void init();
     bool selectGraph(int headerIdx);
-    bool displayInfo(const int headerIdx, const std::string &path);
+    bool displayInfo(int headerIdx, const std::string &path);
 
     std::string static center(const std::string &str, int width);
     void static cleanTerminal();

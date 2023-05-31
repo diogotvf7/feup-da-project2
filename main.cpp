@@ -4,7 +4,6 @@
 #include "headers/Menu.h"
 #include <chrono>
 
-
 int main() {
     std::vector<std::string> paths = {
             "toy-graphs/shipping.csv",

@@ -9,13 +9,13 @@ class MutablePriorityQueue {
     std::vector<Node*> H;
     void heapifyUp(unsigned i);
     void heapifyDown(unsigned i);
-    inline void set(unsigned i, Node *x);
+    inline void set(unsigned i, Node* x);
 
 public:
     MutablePriorityQueue();
-    void insert(Node *x);
+    void insert(Node* x);
     Node* extractMin();
-    void decreaseKey(Node *x);
+    void decreaseKey(Node* x);
     bool empty();
 };
 

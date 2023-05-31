@@ -73,9 +73,9 @@ void Graph::backtrack(Node *currentNode, std::vector<int> &path, double currentC
 }
 
 
-vector<Edge*> Graph::prim() {
+void Graph::prim() {
     vector<Edge*> res;
-    if (nodes.empty()) return res;
+    if (nodes.empty()) return;
 
     for (const auto &[key, node] : nodes) {
         node->setDist(INF);
@@ -104,11 +104,6 @@ vector<Edge*> Graph::prim() {
             }
         }
     }
-
-    for (const auto &[key, node] : nodes)
-        if (node->getPath())
-            res.push_back(node->getPath());
-    return res;
 }
 
 void Graph::preOrderWalk(Node *node, std::vector<int> &tour, double &cost) {
@@ -126,13 +121,16 @@ void Graph::preOrderWalk(Node *node, std::vector<int> &tour, double &cost) {
 
 vector<int> Graph::approxTSPTour(double &cost) {
     vector<int> tour;
-    this->prim();
+    prim();
     for (const auto &[key, node] : nodes)
         node->setVisited(false);
 
     tour.push_back(0);
     preOrderWalk(findNode(0), tour, cost);
     tour.push_back(0);
+
+    for (int i = 0; i < (tour.size() - 1); i++)
+        cost += findNode(tour[i])->getEdge(tour[i + 1])->getDist();
 
     return tour;
 }
