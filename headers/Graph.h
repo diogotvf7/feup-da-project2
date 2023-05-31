@@ -28,6 +28,7 @@ public:
     void prim();
     void preOrderWalk(Node* node, std::vector<int>& tour, double &cost);
     std::vector<int> approxTSPTour(double &cost);
+    std::vector<Edge*> sortMinWeight(std::vector<Edge*> v);
 
 };
 

@@ -7,11 +7,11 @@ using namespace utils;
 
 int main(){
     Graph *graph = new Graph();
-    readToyGraphs("tourism.csv", graph);
+    readToyGraphs("stadiums.csv", graph);
     double cost = 0;
     double bestCost = INF;
 
-
+    /*
     std::cout << "Ex1" << std::endl;
     auto start1 = std::chrono::high_resolution_clock::now();
     vector<int> ex1 = graph->tspBacktracking(bestCost);
@@ -20,6 +20,7 @@ int main(){
     double execTime1 = duration1.count();
     std::cout << "Execution time: " << execTime1 << " ms" << std::endl;
     std::cout << "Cost: " << bestCost << std::endl;
+    */
 
     std::cout << "Ex2" << std::endl;
     auto start2 = std::chrono::high_resolution_clock::now();

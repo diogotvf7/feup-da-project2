@@ -131,16 +131,19 @@ void Graph::prim() {
 
 }
 
+std::vector<Edge*> Graph::sortMinWeight(std::vector<Edge*> v){
+    return v;
+}
+
+
 void Graph::preOrderWalk(Node* node, std::vector<int>& tour, double &cost) {
     node->setVisited(true);
     for (Edge* edge : node->getAdj()) {
         Node* neighbor = edge->getDest();
-        if(neighbor->getPath() != nullptr){
+        if(neighbor->getPath() != nullptr){ //
             if(neighbor->getPath()->getSrc() == node){
-                //cost += edge->getValue();
                 tour.push_back(neighbor->getNodeId());
                 preOrderWalk(neighbor, tour, cost);
-
             }
         }
     }
