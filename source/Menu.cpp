@@ -152,7 +152,6 @@ bool Menu::displayInfo(const int headerIdx, const std::string &path) {
                     // TODO
                     alive = true;
                     std::cout << res.size() << std::endl;
-                    // displayPath(res, path);
                     break;
                 case 2:
                     return true;
@@ -163,7 +162,6 @@ bool Menu::displayInfo(const int headerIdx, const std::string &path) {
             }
         }
     }
-    return false;
 }
 
 std::string Menu::center(const std::string &str, int width) {

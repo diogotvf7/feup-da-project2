@@ -128,8 +128,13 @@ vector<int> Graph::approxTSPTour(double &cost) {
     preOrderWalk(findNode(0), tour);
     tour.push_back(0);
 
-    for (int i = 0; i < (tour.size() - 1); i++)
-        cost += findNode(tour[i])->getEdge(tour[i + 1])->getDist();
+    for (int i = 0; i < (tour.size() - 1); i++){
+        double weight = nodes[tour[i]]->getEdge(tour[i + 1]) != nullptr
+                ? nodes[tour[i]]->getEdge(tour[i + 1])->getDist()
+                : nodes[tour[i]]->getCoordinate().distanceTo(nodes[tour[i + 1]]->getCoordinate());
+
+        cost += weight;
+    }
 
     return tour;
 }

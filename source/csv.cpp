@@ -25,7 +25,8 @@ namespace csv {
 
     void readEdges(const std::string &path, Graph *graph, bool hasHeader, bool hasLabel) {
 
-        std::ifstream csv("../dataset/" + path);
+        std::string a = "dataset/" + path;
+        std::ifstream csv("dataset/" + path);
         std::string buffer;
         if (hasHeader) getline(csv, buffer, '\n'); //ignore header
 

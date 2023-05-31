@@ -56,6 +56,10 @@ std::vector<Edge*> Node::getIncoming() const {
     return incoming;
 }
 
+Coordinate Node::getCoordinate() const {
+    return coord;
+}
+
 void Node::setVisited(bool status) {
     this->visited = status;
 }

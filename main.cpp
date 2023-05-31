@@ -20,13 +20,13 @@ int main() {
             "extra-graphs/edges_700.csv",
             "extra-graphs/edges_800.csv",
             "extra-graphs/edges_900.csv",
-            "real-graphs/graph1",
-            "real-graphs/graph2",
-            "real-graphs/graph3",
+            "real-graphs/graph1/",
+            "real-graphs/graph2/",
+            "real-graphs/graph3/",
             };
     Menu menu = Menu(paths);
     menu.init();
-    
+
 
     return 0;
 }

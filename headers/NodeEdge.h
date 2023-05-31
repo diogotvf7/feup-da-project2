@@ -33,6 +33,7 @@ public:
     [[nodiscard]] Edge *getEdge(int dest) const;
     [[nodiscard]] std::vector<Edge*> getAdj() const;
     [[nodiscard]] std::vector<Edge*> getIncoming() const;
+    [[nodiscard]] Coordinate getCoordinate() const;
     void setVisited(bool status);
     void setDist(double distance);
     void setQueueIndex(int queueIndex);
