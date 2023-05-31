@@ -1,64 +1,41 @@
-//
-// Created by Jaime on 27/05/2023.
-//
-
 #include <algorithm>
 #include "../headers/Graph.h"
+
 using namespace std;
 
-Node* Graph::findNode(const int &idNode) const {
-    for(Node* node : nodes){
-        if(node->getNodeId() == idNode)
-            return node;
-    }
-    return nullptr;
+Node *Graph::findNode(const int &idNode) const {
+    auto it = nodes.find(idNode);
+    return it == nodes.end() ? nullptr : it->second;
 }
 
 void Graph::addNode(Node *node) {
-    if(findNode(node->getNodeId()) == nullptr)
-        nodes.push_back(node);
+    nodes.emplace(node->getId(), node);
 }
 
-//to be finished
-void Graph::addEdge(const int &originNodeId, const int &destinyNodeId, double edgeValue) const {
-    Node* origin = findNode(originNodeId);
-    Node* destiny = findNode(destinyNodeId);
-    if(origin == nullptr || destiny == nullptr) return;
-    origin->addEdge(destiny, edgeValue);
-    destiny->addEdge(origin, edgeValue);
+node_map Graph::getNodes() const {
+    return nodes;
 }
 
-bool Graph::connectedToStart(Node *currentNode) {
-    for(Edge* edge : currentNode->getAdj()){
-        if(edge->getDest()->getNodeId() == 0) return true;
-    }
-    return false;
+void Graph::createEdge(const int &src, const int &dest, double dist) const {
+    Node *origin = findNode(src);
+    Node *destiny = findNode(dest);
+    if (origin == nullptr || destiny == nullptr) return;
+    origin->insertEdge(destiny, dist);
+    destiny->insertEdge(origin, dist);
 }
 
-
-int Graph::getEdgeWeightFromTwoNodes(Node* node1, Node* node2){
-    for(Edge* edge : node1->getAdj()){
-        if(edge->getDest()->getNodeId() == node2->getNodeId()){
-            return edge->getValue();
-        }
-    }
-    return 0;
-}
-
-
-
-vector<int> Graph::tspBacktracking(double &bestCost){
+vector<int> Graph::tspBacktracking(double &bestCost) {
     vector<int> path;
     vector<int> bestPath;
 
-    for(Node* node : nodes){
+    for (const auto &[key, node]: nodes) {
         node->setVisited(false);
     }
 
     //Node with id 0 is always our beginning and end
-    Node* start = findNode(0);
+    Node *start = findNode(0);
     start->setVisited(true);
-    path.push_back(start->getNodeId());
+    path.push_back(start->getId());
 
     backtrack(start, path, 0, bestPath, bestCost);
     bestPath.push_back(0);
@@ -66,98 +43,95 @@ vector<int> Graph::tspBacktracking(double &bestCost){
     return bestPath;
 }
 
-void Graph::backtrack(Node* currentNode, std::vector<int> &path, double currentCost, std::vector<int> &bestPath, double &bestCost){
-
+void Graph::backtrack(Node *currentNode, std::vector<int> &path, double currentCost, std::vector<int> &bestPath, double &bestCost) {
     bool allNodesVisited = true;
-    for(Node* node : nodes){
-        if(!node->isVisited()) {allNodesVisited = false; break;}
-    }
-    if(allNodesVisited && connectedToStart(currentNode)){
-        if((currentCost + getEdgeWeightFromTwoNodes(currentNode, findNode(0)) ) < bestCost){
-            bestPath = path;
-            bestCost = currentCost + getEdgeWeightFromTwoNodes(currentNode, findNode(0));
+    for (const auto &[key, node] : nodes) {
+        if (!node->isVisited()) {
+            allNodesVisited = false;
+            break;
         }
     }
 
-    for(Edge* edge : currentNode->getAdj()){
-        Node* adjNode = edge->getDest();
-        if(!adjNode->isVisited()){
-            adjNode->setVisited(true);
-            path.push_back(adjNode->getNodeId());
-            backtrack(adjNode, path,currentCost + edge->getValue(), bestPath, bestCost);
-            adjNode->setVisited(false);
-            path.pop_back();
+    if (allNodesVisited && currentNode->connectedTo(0)) {
+        Edge *e = currentNode->getEdge(0);
+        double dist = e->getDist();
+        if ((currentCost + dist) < bestCost) {
+            bestPath = path;
+            bestCost = currentCost + dist;
         }
+    }
+
+    for (Edge *edge : currentNode->getAdj()) {
+        Node *adjNode = edge->getDest();
+        if (adjNode->isVisited()) continue;
+        adjNode->setVisited(true);
+        path.push_back(adjNode->getId());
+        backtrack(adjNode, path,currentCost + edge->getDist(), bestPath, bestCost);
+        adjNode->setVisited(false);
+        path.pop_back();
     }
 }
 
 
 void Graph::prim() {
     vector<Edge*> res;
-    if(nodes.empty()) return;
+    if (nodes.empty()) return;
 
-    for(Node* node : nodes){
+    for (const auto &[key, node] : nodes) {
         node->setDist(INF);
         node->setPath(nullptr);
         node->setVisited(false);
     }
 
-    Node* s = findNode(0);
+    Node *s = findNode(0);
     s->setDist(0);
 
     MutablePriorityQueue q;
     q.insert(s);
 
-    while(!q.empty()){
-        Node* v = q.extractMin();
+    while (!q.empty()) {
+        Node *v = q.extractMin();
         v->setVisited(true);
-        for(auto &e : v->getAdj()){
-            Node* w = e->getDest();
-            if(!w->isVisited()){
-                auto oldDistance = w->getDist();
-                if(e->getValue() < oldDistance){
-                    w->setDist(e->getValue());
-                    w->setPath(e);
-                    if(oldDistance == INF){
-                        q.insert(w);
-                    }
-                    else{
-                        q.decreaseKey(w);
-                    }
-                }
+        for (auto &e : v->getAdj()) {
+            Node *w = e->getDest();
+            if (w->isVisited()) continue;
+            auto oldDistance = w->getDist();
+            if (e->getDist() < oldDistance) {
+                w->setDist(e->getDist());
+                w->setPath(e);
+                if (oldDistance == INF) q.insert(w);
+                else q.decreaseKey(w);
             }
         }
     }
-
 }
 
-void Graph::preOrderWalk(Node* node, std::vector<int>& tour, double &cost) {
+void Graph::preOrderWalk(Node *node, std::vector<int> &tour, double &cost) {
     node->setVisited(true);
-    for (Edge* edge : node->getAdj()) {
-        Node* neighbor = edge->getDest();
-        if(neighbor->getPath() != nullptr){
-            if(neighbor->getPath()->getSrc() == node){
-                //cost += edge->getValue();
-                tour.push_back(neighbor->getNodeId());
-                preOrderWalk(neighbor, tour, cost);
-
-            }
+    for (Edge *edge : node->getAdj()) {
+        Node *dest = edge->getDest();
+        if (dest->getPath() == nullptr) continue;
+        if (dest->getPath()->getSrc() == node) {
+            cost += edge->getDist();
+            tour.push_back(dest->getId());
+            preOrderWalk(dest, tour, cost);
         }
     }
 }
 
-vector<int> Graph::approxTSPTour(double &cost){
+vector<int> Graph::approxTSPTour(double &cost) {
     vector<int> tour;
-    this->prim();
-    for(Node* node : nodes) node->setVisited(false);
+    prim();
+    for (const auto &[key, node] : nodes)
+        node->setVisited(false);
 
     tour.push_back(0);
     preOrderWalk(findNode(0), tour, cost);
     tour.push_back(0);
 
-    for(int i = 0; i < (tour.size() - 1); i++){
-        cost += getEdgeWeightFromTwoNodes(findNode(tour[i]), findNode(tour[i + 1]));
-    }
+    for (int i = 0; i < (tour.size() - 1); i++)
+        cost += findNode(tour[i])->getEdge(tour[i + 1])->getDist();
+
     return tour;
 }
 

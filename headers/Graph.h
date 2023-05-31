@@ -1,35 +1,49 @@
-//
-// Created by Jaime on 27/05/2023.
-//
+#ifndef GRAPH_H
+#define GRAPH_H
 
-#ifndef PROJETO_DA_GRAPH_H
-#define PROJETO_DA_GRAPH_H
-
+#include <iostream>
+#include <chrono>
 #include <vector>
+#include <unordered_map>
+#include "NodeEdge.h"
 #include "MutablePriorityQueue.h"
+
 #define INF INT16_MAX
+#define node_map std::unordered_map<int, Node*>
 
 class Graph {
-    std::vector<Node*> nodes;
+    node_map nodes;
+
 public:
-    Node* findNode(const int &idNode) const;
-    void addNode(Node* node);
-
-
-    bool connectedToStart(Node* currentNode);
-    int getEdgeWeightFromTwoNodes(Node* node1, Node* node2);
-    void addEdge(const int &originNodeId, const int &destinyNodeId,  double edgeValue) const;
+    Node *findNode(const int &idNode) const;
+    void addNode(Node *node);
+    node_map getNodes() const;
+    void createEdge(const int &src, const int &dest, double dist) const;
 
     /*First Exercise*/
     std::vector<int> tspBacktracking(double &bestCost);
-    void backtrack(Node* currentNode, std::vector<int> &path, double currentCost, std::vector<int> &bestPath, double &bestCost);
+    void backtrack(Node *currentNode, std::vector<int> &path, double currentCost, std::vector<int> &bestPath, double &bestCost);
 
     /*Second Exercise*/
     void prim();
-    void preOrderWalk(Node* node, std::vector<int>& tour, double &cost);
+    void preOrderWalk(Node *node, std::vector<int> &tour, double &cost);
     std::vector<int> approxTSPTour(double &cost);
-
 };
 
+template<typename Func, typename Object, typename... Args>
+auto measureExecutionTime(long &elapsedTime, Func&& func, Object&& object, Args&&... args)
+{
+    auto start = std::chrono::high_resolution_clock::now();
 
-#endif //PROJETO_DA_GRAPH_H
+    auto result = (std::forward<Object>(object).*std::forward<Func>(func))(std::forward<Args>(args)...);
+
+    auto end = std::chrono::high_resolution_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+    elapsedTime = duration.count();
+
+    return result;
+}
+
+#endif //GRAPH_H
