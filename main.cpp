@@ -29,22 +29,22 @@ int main() {
 
 
 
-/*    Graph *graph = new Graph();
-    csv::readEdges("toy-graphs/stadiums.csv", graph);
+    Graph *graph = new Graph();
+    csv::readEdges("toy-graphs/tourism.csv", graph);
     double cost = 0;
     double bestCost = INF;
-    long elapsedTime;
+    double elapsedTime;
 
     std::cout << "--- Ex1 ---" << std::endl;
-    std::vector<int> ex1 = measureExecutionTime(elapsedTime, &Graph::tspBacktracking, *graph, bestCost);
+    std::vector<int> ex1 = measureExecutionTime(elapsedTime, *graph, &Graph::tspBacktracking, bestCost);
     std::cout << "Elapsed Time: " << elapsedTime << "ms" << std::endl;
     std::cout << "Cost: " << bestCost << std::endl;
     std::cout << std::endl;
 
     std::cout << "--- Ex2 ---" << std::endl;
-    std::vector<int> ex2 = measureExecutionTime(elapsedTime, &Graph::approxTSPTour, *graph, cost);
+    std::vector<int> ex2 = measureExecutionTime(elapsedTime, *graph, &Graph::approxTSPTour, cost);
     std::cout << "Elapsed Time: " << elapsedTime << "ms" << std::endl;
-    std::cout << "Cost: " << cost << std::endl;*/
+    std::cout << "Cost: " << cost << std::endl;
 
     return 0;
 }

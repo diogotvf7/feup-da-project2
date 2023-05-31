@@ -31,15 +31,30 @@ public:
 };
 
 template<typename Func, typename Object, typename... Args>
-auto measureExecutionTime(long &elapsedTime, Func&& func, Object&& object, Args&&... args)
+auto measureExecutionTime(double &elapsedTime, Object&& object, Func&& func, Args&&... args)
 {
+ /*   auto start = std::chrono::high_resolution_clock::now();
+    std::cout << "Start: " << start.time_since_epoch().count() << std::endl;
+
+    auto result = (std::forward<Object>(object).*std::forward<Func>(func))(std::forward<Args>(args)...);
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::cout << "End: " << end.time_since_epoch().count() << std::endl;
+
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    std::cout << "Duration: " << duration.count() << " ms" << std::endl;
+
+    elapsedTime = duration.count();
+
+    return result;*/
+
     auto start = std::chrono::high_resolution_clock::now();
 
     auto result = (std::forward<Object>(object).*std::forward<Func>(func))(std::forward<Args>(args)...);
 
     auto end = std::chrono::high_resolution_clock::now();
 
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    std::chrono::duration<double, std::milli> duration = end - start;
 
     elapsedTime = duration.count();
 

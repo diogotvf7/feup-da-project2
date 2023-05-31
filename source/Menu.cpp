@@ -3,14 +3,14 @@
 Menu::Menu(const std::vector<std::string> &paths) {
     for (auto &path : paths)
         graphs.emplace(path, nullptr);
-    headers = {"Backtracking", "Triangular Approximation", "Our heuristic"};
+    headers = {"", "Backtracking", "Triangular Approximation", "Our heuristic"};
 }
 
 void Menu::readGraph(const std::string &path) {
     auto g = std::find(cachedGraphs.begin(), cachedGraphs.end(), path);
     if (g != cachedGraphs.end()) return;
     Graph *graph = new Graph();
-    // verificar argumentos diferentes para ler os grafos
+    // TODO verificar argumentos diferentes para ler os grafos
     if (path.substr(0, path.find('/')) == "real-graphs") {
         csv::readNodes(path + "nodes.csv", graph);
         csv::readEdges(path + "edges.csv", graph);
@@ -49,13 +49,13 @@ void Menu::init() {
         std::cin >> input;
         switch (stoi(input)) {
             case 1:
-                selectGraph(0);
-                break;
-            case 2:
                 selectGraph(1);
                 break;
-            case 3:
+            case 2:
                 selectGraph(2);
+                break;
+            case 3:
+                selectGraph(3);
                 break;
             case 4:
                 return;
@@ -64,7 +64,6 @@ void Menu::init() {
                 break;
         }
     }
-
 }
 
 bool Menu::selectGraph(const int headerIdx) {
@@ -89,35 +88,35 @@ bool Menu::selectGraph(const int headerIdx) {
                    << '|' << std::string(100, '-') << '|' << std::endl
                    << std::right << std::setw(20) << "Option: ";
         std::cin >> input;
-        readGraph(options[stoi(input)]);
         switch (stoi(input)) {
             case 0:
                 alive = false;
                 break;
             default:
-                std::cout << "alive: " << alive << std::endl;
-                alive = displayInfo(headerIdx, options[stoi(input)]);
-                std::cout << "alive: " << alive << std::endl;
+                readGraph(options[stoi(input) - 1]);
+                alive = displayInfo(headerIdx, options[stoi(input) - 1]);
                 break;
         }
     }
+    return false;
 }
 
 bool Menu::displayInfo(const int headerIdx, const std::string &path) {
     std::vector<int> res;
-    long elapsedTime;
-    double bestDist, dist;
-    std::cout << "here!" << std::endl;
+    double elapsedTime;
+    double dist = 0, bestDist = INF;
     switch (headerIdx) {
         case 1:
-            res = measureExecutionTime(elapsedTime, &Graph::tspBacktracking, *graphs[path], bestDist);
+            res = measureExecutionTime(elapsedTime, *graphs[path], &Graph::tspBacktracking, bestDist);
             break;
         case 2:
-            res = measureExecutionTime(elapsedTime, &Graph::approxTSPTour, *graphs[path], dist);;
+            res = measureExecutionTime(elapsedTime, *graphs[path], &Graph::approxTSPTour, dist);
             break;
         case 3:
             // TODO
             break;
+        default:
+            return false;
     }
     bool alive = true;
     while (alive) {
@@ -129,13 +128,13 @@ bool Menu::displayInfo(const int headerIdx, const std::string &path) {
                   << '|' << std::string(100, ' ') << '|' << std::endl
                   << '|' << center("Execution time: " + std::to_string(elapsedTime) + "ms", 100) << '|' << std::endl;
         switch (headerIdx) {
-            case 0:
+            case 1:
                 std::cout << '|' << center("Best distance: " + std::to_string(bestDist), 100) << '|' << std::endl;
                 break;
-            case 1:
+            case 2:
                 std::cout << '|' << center("Distance: " + std::to_string(dist), 100) << '|' << std::endl;
                 break;
-            case 2:
+            case 3:
                 // TODO
                 break;
         }
@@ -151,6 +150,8 @@ bool Menu::displayInfo(const int headerIdx, const std::string &path) {
             switch (stoi(input)) {
                 case 1:
                     // TODO
+                    alive = true;
+                    std::cout << res.size() << std::endl;
                     // displayPath(res, path);
                     break;
                 case 2:
@@ -162,6 +163,7 @@ bool Menu::displayInfo(const int headerIdx, const std::string &path) {
             }
         }
     }
+    return false;
 }
 
 std::string Menu::center(const std::string &str, int width) {
