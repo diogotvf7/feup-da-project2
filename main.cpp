@@ -26,25 +26,7 @@ int main() {
             };
     Menu menu = Menu(paths);
     menu.init();
-
-
-
-    Graph *graph = new Graph();
-    csv::readEdges("toy-graphs/tourism.csv", graph);
-    double cost = 0;
-    double bestCost = INF;
-    double elapsedTime;
-
-    std::cout << "--- Ex1 ---" << std::endl;
-    std::vector<int> ex1 = measureExecutionTime(elapsedTime, *graph, &Graph::tspBacktracking, bestCost);
-    std::cout << "Elapsed Time: " << elapsedTime << "ms" << std::endl;
-    std::cout << "Cost: " << bestCost << std::endl;
-    std::cout << std::endl;
-
-    std::cout << "--- Ex2 ---" << std::endl;
-    std::vector<int> ex2 = measureExecutionTime(elapsedTime, *graph, &Graph::approxTSPTour, cost);
-    std::cout << "Elapsed Time: " << elapsedTime << "ms" << std::endl;
-    std::cout << "Cost: " << cost << std::endl;
+    
 
     return 0;
 }

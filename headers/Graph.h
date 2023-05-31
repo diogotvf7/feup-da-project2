@@ -26,7 +26,7 @@ public:
 
     /*Second Exercise*/
     void prim();
-    void preOrderWalk(Node *node, std::vector<int> &tour, double &cost);
+    void preOrderWalk(Node *node, std::vector<int> &tour);
     std::vector<int> approxTSPTour(double &cost);
 };
 
