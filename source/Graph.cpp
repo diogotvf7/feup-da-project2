@@ -24,7 +24,7 @@ void Graph::createEdge(const int &src, const int &dest, double dist) const {
     destiny->insertEdge(origin, dist);
 }
 
-vector<int> Graph::tspBacktracking(double &bestCost){
+vector<int> Graph::tspBacktracking(double &bestCost) {
     vector<int> path;
     vector<int> bestPath;
 
@@ -54,10 +54,10 @@ void Graph::backtrack(Node *currentNode, std::vector<int> &path, double currentC
 
     if (allNodesVisited && currentNode->connectedTo(0)) {
         Edge *e = currentNode->getEdge(0);
-        double dist = e ? e->getDist() : 0;
+        double dist = e->getDist();
         if ((currentCost + dist) < bestCost) {
             bestPath = path;
-            bestCost = currentCost;
+            bestCost = currentCost + dist;
         }
     }
 
@@ -116,7 +116,7 @@ void Graph::preOrderWalk(Node *node, std::vector<int> &tour, double &cost) {
     for (Edge *edge : node->getAdj()) {
         Node *dest = edge->getDest();
         if (dest->getPath() == nullptr) continue;
-        if (dest->getPath()->getSrc() == node){
+        if (dest->getPath()->getSrc() == node) {
             cost += edge->getDist();
             tour.push_back(dest->getId());
             preOrderWalk(dest, tour, cost);
@@ -124,7 +124,7 @@ void Graph::preOrderWalk(Node *node, std::vector<int> &tour, double &cost) {
     }
 }
 
-vector<int> Graph::approxTSPTour(double &cost){
+vector<int> Graph::approxTSPTour(double &cost) {
     vector<int> tour;
     this->prim();
     for (const auto &[key, node] : nodes)

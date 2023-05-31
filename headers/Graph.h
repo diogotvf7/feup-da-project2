@@ -1,6 +1,8 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
+#include <iostream>
+#include <chrono>
 #include <vector>
 #include <unordered_map>
 #include "NodeEdge.h"
@@ -27,5 +29,21 @@ public:
     void preOrderWalk(Node *node, std::vector<int> &tour, double &cost);
     std::vector<int> approxTSPTour(double &cost);
 };
+
+template<typename Func, typename Object, typename... Args>
+auto measureExecutionTime(long &elapsedTime, Func&& func, Object&& object, Args&&... args)
+{
+    auto start = std::chrono::high_resolution_clock::now();
+
+    auto result = (std::forward<Object>(object).*std::forward<Func>(func))(std::forward<Args>(args)...);
+
+    auto end = std::chrono::high_resolution_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+    elapsedTime = duration.count();
+
+    return result;
+}
 
 #endif //GRAPH_H

@@ -39,5 +39,5 @@ add_executable(projeto_da
         source/Coordinate.cpp
         headers/MutablePriorityQueue.h
         source/MutablePriorityQueue.cpp
-        )
+        headers/Menu.h source/Menu.cpp)
 
