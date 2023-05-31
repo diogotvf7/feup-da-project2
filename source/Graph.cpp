@@ -35,12 +35,7 @@ vector<int> Graph::tspBacktracking(double &bestCost) {
     //Node with id 0 is always our beginning and end
     Node *start = findNode(0);
     start->setVisited(true);
-<<<<<<< HEAD
-    path.push_back(0);
-=======
     path.push_back(start->getId());
->>>>>>> 201bef37035ae7697fdffe9418e5aa00f13a4a4c
-
     backtrack(start, path, 0, bestPath, bestCost);
     bestPath.push_back(0);
 
@@ -133,10 +128,13 @@ vector<int> Graph::approxTSPTour(double &cost) {
     tour.push_back(0);
 
     for (int i = 0; i < (tour.size() - 1); i++){
-        double weight = nodes[tour[i]]->getEdge(tour[i + 1]) != nullptr
-                ? nodes[tour[i]]->getEdge(tour[i + 1])->getDist()
-                : nodes[tour[i]]->getCoordinate().distanceTo(nodes[tour[i + 1]]->getCoordinate());
-
+        double weight;
+        Edge* e = nodes[tour[i]]->getEdge(tour[i + 1]);
+        if (nodes[tour[i]]->getEdge(tour[i + 1]) == nullptr){
+             weight = nodes[tour[i]]->getCoordinate().distanceTo(nodes[tour[i + 1]]->getCoordinate());
+            int x = 0;
+        }
+        else  weight = nodes[tour[i]]->getEdge(tour[i + 1]) != nullptr ? nodes[tour[i]]->getEdge(tour[i + 1])->getDist() : nodes[tour[i]]->getCoordinate().distanceTo(nodes[tour[i + 1]]->getCoordinate());
         cost += weight;
     }
 

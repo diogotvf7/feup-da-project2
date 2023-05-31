@@ -5,7 +5,7 @@
 namespace csv {
 
     void readNodes(const std::string &path, Graph *graph) {
-        std::ifstream csv("../dataset/" + path);
+        std::ifstream csv("dataset/" + path);
         std::string buffer;
         getline(csv, buffer, '\n'); //ignore header
 

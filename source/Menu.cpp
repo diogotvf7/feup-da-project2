@@ -148,13 +148,23 @@ bool Menu::displayInfo(const int headerIdx, const std::string &path) {
         std::cin >> input;
         while (true) {
             switch (stoi(input)) {
-                case 1:
-                    // TODO
-                    alive = true;
-                    std::cout << res.size() << std::endl;
-                    break;
                 case 2:
                     return true;
+                case 1:
+                    for (int i = 0; i < res.size(); i++){
+                        if (i == res.size() - 1) std::cout << res[i] << std::endl;
+                        else std::cout << res[i] << "->";
+                    }
+                    while(true){
+                        std::cout << '|' << std::string(100, '-') << '|' << std::endl
+                                  << '|' << std::string(100, ' ') << '|' << std::endl
+                                  << '|' << center("0.  Return to menu", 100) << '|' << std::endl
+                                  << '|' << std::string(100, '-') << '|' << std::endl
+                                  << std::right << std::setw(20) << "Option: ";
+                        std::cin >> input;
+                        if (stoi(input) == 0) { input = "2"; break; }
+                    }
+                    break;
                 default:
                     std::cout << "Invalid option!" << std::endl;
                     std::cin >> input;
