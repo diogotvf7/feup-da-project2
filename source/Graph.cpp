@@ -43,7 +43,7 @@ vector<int> Graph::tspBacktracking(double &bestCost) {
     return bestPath;
 }
 
-void Graph::backtrack(Node *currentNode, std::vector<int> &path, double currentCost, std::vector<int> &bestPath, double &bestCost) {
+void Graph::backtrack(Node *currentNode, vector<int> &path, double currentCost, vector<int> &bestPath, double &bestCost) {
     bool allNodesVisited = true;
     for (const auto &[key, node] : nodes) {
         if (!node->isVisited()) {
@@ -71,7 +71,6 @@ void Graph::backtrack(Node *currentNode, std::vector<int> &path, double currentC
         path.pop_back();
     }
 }
-
 
 void Graph::prim() {
     vector<Edge*> res;
@@ -106,7 +105,7 @@ void Graph::prim() {
     }
 }
 
-void Graph::preOrderWalk(Node *node, std::vector<int> &tour) {
+void Graph::preOrderWalk(Node *node, vector<int> &tour) {
     node->setVisited(true);
     for (Edge *edge : node->getAdj()) {
         Node *dest = edge->getDest();
@@ -132,6 +131,93 @@ vector<int> Graph::approxTSPTour(double &cost) {
         cost += findNode(tour[i])->getEdge(tour[i + 1])->getDist();
 
     return tour;
+}
+
+void Graph::updatePheromoneTrails(vector<vector<double>> &pheromoneTrails, const vector<AntPath> &ants,
+                                         double evaporationRate, double pheromoneDeposit) {
+    // Evaporate pheromone trails
+    for (auto &trailRow : pheromoneTrails)
+        for (auto &trail : trailRow)
+            trail *= (1.0 - evaporationRate);
+
+    for (const auto &ant : ants) {
+        double pheromoneAddition = pheromoneDeposit / ant.distance;
+        for (size_t i = 0; i < ant.path.size() - 1; ++i) {
+            int src = ant.path[i];
+            int dest = ant.path[i + 1];
+            pheromoneTrails[src][dest] += pheromoneAddition;
+            pheromoneTrails[dest][src] += pheromoneAddition;
+        }
+    }
+}
+
+void Graph::performACO(vector<vector<double>> &pheromoneTrails, double evaporationRate, double pheromoneDeposit,
+                       int numIterations, int numAnts, int ALPHA, int BETA) {
+    random_device rd;
+    mt19937 rng(rd());
+    uniform_real_distribution<double> distribution(0.0, 1.0);
+
+    vector<AntPath> ants;
+    AntPath bestAntPath;
+
+    for (int iteration = 0; iteration < numIterations; ++iteration) {
+
+        // Construct ant paths          vv
+        for (int ant = 0; ant < numAnts; ++ant) {
+            // Construct path for ant
+            AntPath antPath = {{0}, 0};
+            for (auto &[key, node] : nodes)
+                node->setVisited(false);
+            int currentNode = 0;
+            nodes[currentNode]->setVisited(true);
+            for (int i = 0; i < nodes.size() - 1; ++i) {
+                // Select next node
+                double sum = 0.0;
+                for (int j = 0; j < nodes.size(); ++j) {
+                    if (!nodes[j]->isVisited()) {
+                        double dist = nodes[currentNode]->getEdge(j)
+                                ? nodes[currentNode]->getEdge(j)->getDist()
+                                : nodes[currentNode]->getCoord().distanceTo(nodes[j]->getCoord());
+                        sum += pow(pheromoneTrails[currentNode][j], ALPHA) *
+                               pow(dist, BETA);
+                    }
+                }
+
+                double random = distribution(rng);
+                double prob = 0.0;
+                int nextNode = 0;
+
+                for (int j = 0; j < nodes.size(); ++j) {
+                    if (!nodes[j]->isVisited()) {
+                        double dist = nodes[currentNode]->getEdge(j)
+                                      ? nodes[currentNode]->getEdge(j)->getDist()
+                                      : nodes[currentNode]->getCoord().distanceTo(nodes[j]->getCoord());
+                        prob += pow(pheromoneTrails[currentNode][j], ALPHA) *
+                                pow(dist, BETA) / sum;
+                        if (random <= prob) {
+                            nextNode = j;
+                            break;
+                        }
+                    }
+                }
+                antPath.path.push_back(nextNode);
+                nodes[nextNode]->setVisited(true);
+                currentNode = nextNode;
+            }
+
+            if (antPath.distance < bestAntPath.distance)
+                bestAntPath = antPath;
+            ants.push_back(antPath);
+        }
+
+        // Compare and update pheromone trails
+
+//        vector<AntPath> ants;  // Vector of ants
+        // Initialize ants (ant1 and ant2 and so on...) with the constructed paths each ant
+
+        // Update pheromone trails based on the created ant paths
+        updatePheromoneTrails(pheromoneTrails, ants, evaporationRate, pheromoneDeposit);
+    }
 }
 
 

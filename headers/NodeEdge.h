@@ -30,6 +30,7 @@ public:
     [[nodiscard]] double getDist() const;
     [[nodiscard]] int getQueueIndex() const;
     [[nodiscard]] Edge *getPath() const;
+    [[nodiscard]] Coordinate getCoord() const;
     [[nodiscard]] Edge *getEdge(int dest) const;
     [[nodiscard]] std::vector<Edge*> getAdj() const;
     [[nodiscard]] std::vector<Edge*> getIncoming() const;
@@ -37,6 +38,7 @@ public:
     void setDist(double distance);
     void setQueueIndex(int queueIndex);
     void setPath(Edge *newPath);
+    void setCoord(Coordinate _coord);
     Edge* insertEdge(Node *dest, double &distance);
     [[nodiscard]] bool connectedTo(int id) const;
     bool operator<(Node &node) const;
@@ -47,6 +49,8 @@ class Edge {
     Node *src;
     Node *dest;
     double dist;
+    double pheromone;
+    Coordinate coord;
 
 public:
     Edge(Node *src, Node *dest, const double &dist);

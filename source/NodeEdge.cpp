@@ -88,6 +88,14 @@ bool Node::operator<(Node & node) const {
     return this->dist < node.dist;
 }
 
+Coordinate Node::getCoord() const {
+    return coord;
+}
+
+void Node::setCoord(Coordinate _coord) {
+    this->coord = _coord;
+}
+
 /*                              Edge                              */
 
 Edge::Edge(Node* src, Node* dest, const double &dist) {
@@ -106,4 +114,12 @@ Node* Edge::getSrc() const {
 
 Node* Edge::getDest() const {
     return dest;
+}
+
+double Edge::getPheromone() const {
+    return pheromone;
+}
+
+void Edge::setPheromone(double _pheromone) {
+    this->pheromone = _pheromone;
 }

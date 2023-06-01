@@ -1,8 +1,9 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
-#include <iostream>
+#include <random>
 #include <chrono>
+#include <iostream>
 #include <vector>
 #include <unordered_map>
 #include "NodeEdge.h"
@@ -10,6 +11,11 @@
 
 #define INF INT16_MAX
 #define node_map std::unordered_map<int, Node*>
+
+struct AntPath {
+    std::vector<int> path;
+    double distance;
+};
 
 class Graph {
     node_map nodes;
@@ -28,26 +34,24 @@ public:
     void prim();
     void preOrderWalk(Node *node, std::vector<int> &tour);
     std::vector<int> approxTSPTour(double &cost);
+
+    /*Third Exercise*/
+    // Function to update pheromone trails based on ant paths
+    static void updatePheromoneTrails(std::vector<std::vector<double>>& pheromoneTrails,
+                                      const std::vector<AntPath> &ants,
+                                      double evaporationRate, double pheromoneDeposit);
+
+    // Function to perform ACO with two ants in the same thread
+    void performACO(std::vector<std::vector<double>>& pheromoneTrails,
+                           double evaporationRate, double pheromoneDeposit,
+                           int numIterations, int numAnts, int ALPHA, int BETA);
 };
+
+/*                           Performance analysis                           */
 
 template<typename Func, typename Object, typename... Args>
 auto measureExecutionTime(double &elapsedTime, Object&& object, Func&& func, Args&&... args)
 {
- /*   auto start = std::chrono::high_resolution_clock::now();
-    std::cout << "Start: " << start.time_since_epoch().count() << std::endl;
-
-    auto result = (std::forward<Object>(object).*std::forward<Func>(func))(std::forward<Args>(args)...);
-
-    auto end = std::chrono::high_resolution_clock::now();
-    std::cout << "End: " << end.time_since_epoch().count() << std::endl;
-
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    std::cout << "Duration: " << duration.count() << " ms" << std::endl;
-
-    elapsedTime = duration.count();
-
-    return result;*/
-
     auto start = std::chrono::high_resolution_clock::now();
 
     auto result = (std::forward<Object>(object).*std::forward<Func>(func))(std::forward<Args>(args)...);
