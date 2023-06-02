@@ -154,9 +154,7 @@ AntPath Graph::performACO(vector<vector<double>> &pheromoneTrails, double evapor
     mt19937 rng(rd());
     uniform_real_distribution<double> distribution(0.0, 1.0);
 
-    /**/
-    ofstream file("/home/diogotvf7/Documents/2a2s/da/DA-Project2/results.txt");
-    /**/
+    /* ofstream file("/home/diogotvf7/Documents/2a2s/da/DA-Project2/ex3-log.txt"); */
 
     AntPath bestAntPath = {{0}, DBL_MAX};
 
@@ -208,12 +206,12 @@ AntPath Graph::performACO(vector<vector<double>> &pheromoneTrails, double evapor
                 currentNode = nextNode;
             }
 
-            file << "Iteration: " << iteration << endl
+/*            file << "Iteration: " << iteration << endl
                  << "    Ant: " << ant << endl
                  << "        Distance: " << antPath.distance
                  << endl << endl
                  << "------------------------"
-                 << endl << endl;
+                 << endl << endl;*/
 
             antPath.path.push_back(0);
             antPath.distance += nodes[currentNode]->getEdge(0)
@@ -227,7 +225,9 @@ AntPath Graph::performACO(vector<vector<double>> &pheromoneTrails, double evapor
 
         updatePheromoneTrails(pheromoneTrails, ants, evaporationRate, pheromoneDeposit);
     }
-    file.close();
+
+    /* file.close(); */
+
     return bestAntPath;
 }
 
