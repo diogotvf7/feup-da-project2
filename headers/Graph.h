@@ -15,7 +15,7 @@
 #include <fstream>
 
 
-#define INF INT16_MAX
+#define INF INT32_MAX
 #define node_map std::unordered_map<int, Node*>
 
 struct AntPath {
