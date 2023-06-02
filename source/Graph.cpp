@@ -1,4 +1,3 @@
-#include <algorithm>
 #include "../headers/Graph.h"
 
 using namespace std;
@@ -155,11 +154,14 @@ AntPath Graph::performACO(vector<vector<double>> &pheromoneTrails, double evapor
     mt19937 rng(rd());
     uniform_real_distribution<double> distribution(0.0, 1.0);
 
-    AntPath bestAntPath = {{0}, INF};
+    /**/
+    ofstream file("/home/diogotvf7/Documents/2a2s/da/DA-Project2/results.txt");
+    /**/
+
+    AntPath bestAntPath = {{0}, DBL_MAX};
 
     for (int iteration = 0; iteration < numIterations; ++iteration) {
         vector<AntPath> ants;
-
         for (int ant = 0; ant < numAnts; ++ant) {
             AntPath antPath = {{0}, 0};
             for (auto &[key, node] : nodes)
@@ -198,6 +200,7 @@ AntPath Graph::performACO(vector<vector<double>> &pheromoneTrails, double evapor
                     }
                 }
 
+
                 antPath.distance += nodes[currentNode]->getEdge(nextNode)
                                     ? nodes[currentNode]->getEdge(nextNode)->getDist()
                                     : nodes[currentNode]->getCoord().distanceTo(nodes[nextNode]->getCoord());
@@ -205,10 +208,18 @@ AntPath Graph::performACO(vector<vector<double>> &pheromoneTrails, double evapor
                 currentNode = nextNode;
             }
 
+            file << "Iteration: " << iteration << endl
+                 << "    Ant: " << ant << endl
+                 << "        Distance: " << antPath.distance
+                 << endl << endl
+                 << "------------------------"
+                 << endl << endl;
+
             antPath.path.push_back(0);
             antPath.distance += nodes[currentNode]->getEdge(0)
                                 ? nodes[currentNode]->getEdge(0)->getDist()
                                 : nodes[currentNode]->getCoord().distanceTo(nodes[0]->getCoord());
+
             if (antPath.distance < bestAntPath.distance)
                 bestAntPath = antPath;
             ants.push_back(antPath);
@@ -216,7 +227,7 @@ AntPath Graph::performACO(vector<vector<double>> &pheromoneTrails, double evapor
 
         updatePheromoneTrails(pheromoneTrails, ants, evaporationRate, pheromoneDeposit);
     }
-
+    file.close();
     return bestAntPath;
 }
 

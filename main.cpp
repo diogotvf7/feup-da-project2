@@ -29,7 +29,7 @@ int main() {
     
 
     Graph graph = Graph();
-    csv::readEdges("extra-graphs/edges_100.csv", &graph);
+    csv::readEdges("extra-graphs/edges_25.csv", &graph);
 /*    csv::readNodes("real-graphs/graph1/nodes.csv", &graph);
     csv::readEdges("real-graphs/graph1/edges.csv", &graph);*/
 
@@ -38,8 +38,8 @@ int main() {
     AntPath bestPath = graph.performACO(pheromoneTrails,
                                  0.60,
                                  1,
-                                 100,
-                                 10,
+                                 2500,
+                                 20,
                                  1,
                                  1
                                 );
@@ -49,16 +49,14 @@ int main() {
         std::cout << i << " ";
     std::cout << std::endl << "Path cost: " << bestPath.distance << std::endl;
 
-    std::cout << std::endl << std::endl << std::endl << std::endl;
+    std::cout << std::endl << std::endl << std::endl;
 
     double bestCost = INF;
-    std::vector<int> path = graph.tspBacktracking(bestCost);
+    std::vector<int> path = graph.approxTSPTour(bestCost);
     std::cout << "Best path: ";
     for (int i : path)
         std::cout << i << " ";
     std::cout << std::endl << "Path cost: " << bestCost << std::endl;
-
-
 
     return 0;
 }
