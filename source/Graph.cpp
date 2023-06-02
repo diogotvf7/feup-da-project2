@@ -28,9 +28,8 @@ vector<int> Graph::tspBacktracking(double &bestCost) {
     vector<int> path;
     vector<int> bestPath;
 
-    for (const auto &[key, node]: nodes) {
+    for (const auto &[key, node]: nodes)
         node->setVisited(false);
-    }
 
     //Node with id 0 is always our beginning and end
     Node *start = findNode(0);
@@ -135,7 +134,6 @@ vector<int> Graph::approxTSPTour(double &cost) {
 
 void Graph::updatePheromoneTrails(vector<vector<double>> &pheromoneTrails, const vector<AntPath> &ants,
                                          double evaporationRate, double pheromoneDeposit) {
-    // Evaporate pheromone trails
     for (auto &trailRow : pheromoneTrails)
         for (auto &trail : trailRow)
             trail *= (1.0 - evaporationRate);
@@ -151,27 +149,25 @@ void Graph::updatePheromoneTrails(vector<vector<double>> &pheromoneTrails, const
     }
 }
 
-void Graph::performACO(vector<vector<double>> &pheromoneTrails, double evaporationRate, double pheromoneDeposit,
-                       int numIterations, int numAnts, int ALPHA, int BETA) {
+AntPath Graph::performACO(vector<vector<double>> &pheromoneTrails, double evaporationRate, double pheromoneDeposit,
+                              int numIterations, int numAnts, int ALPHA, int BETA) {
     random_device rd;
     mt19937 rng(rd());
     uniform_real_distribution<double> distribution(0.0, 1.0);
 
-    vector<AntPath> ants;
-    AntPath bestAntPath;
+    AntPath bestAntPath = {{0}, INF};
 
     for (int iteration = 0; iteration < numIterations; ++iteration) {
+        vector<AntPath> ants;
 
-        // Construct ant paths          vv
         for (int ant = 0; ant < numAnts; ++ant) {
-            // Construct path for ant
             AntPath antPath = {{0}, 0};
             for (auto &[key, node] : nodes)
                 node->setVisited(false);
+
             int currentNode = 0;
             nodes[currentNode]->setVisited(true);
             for (int i = 0; i < nodes.size() - 1; ++i) {
-                // Select next node
                 double sum = 0.0;
                 for (int j = 0; j < nodes.size(); ++j) {
                     if (!nodes[j]->isVisited()) {
@@ -196,32 +192,33 @@ void Graph::performACO(vector<vector<double>> &pheromoneTrails, double evaporati
                                 pow(dist, BETA) / sum;
                         if (random <= prob) {
                             nextNode = j;
+                            antPath.path.push_back(nextNode);
                             break;
                         }
                     }
                 }
-                antPath.path.push_back(nextNode);
+
+                antPath.distance += nodes[currentNode]->getEdge(nextNode)
+                                    ? nodes[currentNode]->getEdge(nextNode)->getDist()
+                                    : nodes[currentNode]->getCoord().distanceTo(nodes[nextNode]->getCoord());
                 nodes[nextNode]->setVisited(true);
                 currentNode = nextNode;
             }
 
+            antPath.path.push_back(0);
+            antPath.distance += nodes[currentNode]->getEdge(0)
+                                ? nodes[currentNode]->getEdge(0)->getDist()
+                                : nodes[currentNode]->getCoord().distanceTo(nodes[0]->getCoord());
             if (antPath.distance < bestAntPath.distance)
                 bestAntPath = antPath;
             ants.push_back(antPath);
         }
 
-        // Compare and update pheromone trails
-
-//        vector<AntPath> ants;  // Vector of ants
-        // Initialize ants (ant1 and ant2 and so on...) with the constructed paths each ant
-
-        // Update pheromone trails based on the created ant paths
         updatePheromoneTrails(pheromoneTrails, ants, evaporationRate, pheromoneDeposit);
     }
+
+    return bestAntPath;
 }
-
-
-
 
 
 

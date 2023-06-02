@@ -50,13 +50,14 @@ class Edge {
     Node *dest;
     double dist;
     double pheromone;
-    Coordinate coord;
 
 public:
     Edge(Node *src, Node *dest, const double &dist);
     [[nodiscard]] double getDist() const;
     [[nodiscard]] Node *getSrc() const;
     [[nodiscard]] Node *getDest() const;
+    [[nodiscard]] double getPheromone() const;
+    void setPheromone(double _pheromone);
 };
 
 #endif //NODE_EDGE_H

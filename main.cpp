@@ -5,7 +5,7 @@
 #include <chrono>
 
 int main() {
-    std::vector<std::string> paths = {
+/*    std::vector<std::string> paths = {
             "toy-graphs/shipping.csv",
             "toy-graphs/stadiums.csv",
             "toy-graphs/tourism.csv",
@@ -25,8 +25,40 @@ int main() {
             "real-graphs/graph3/",
             };
     Menu menu = Menu(paths);
-    menu.init();
+    menu.init();*/
     
+
+    Graph graph = Graph();
+    csv::readEdges("extra-graphs/edges_100.csv", &graph);
+/*    csv::readNodes("real-graphs/graph1/nodes.csv", &graph);
+    csv::readEdges("real-graphs/graph1/edges.csv", &graph);*/
+
+    std::vector<std::vector<double>> pheromoneTrails(graph.getNodes().size(), std::vector<double>(graph.getNodes().size(), 0.3));
+
+    AntPath bestPath = graph.performACO(pheromoneTrails,
+                                 0.60,
+                                 1,
+                                 100,
+                                 10,
+                                 1,
+                                 1
+                                );
+
+    std::cout << "Best path: ";
+    for (int i : bestPath.path)
+        std::cout << i << " ";
+    std::cout << std::endl << "Path cost: " << bestPath.distance << std::endl;
+
+    std::cout << std::endl << std::endl << std::endl << std::endl;
+
+    double bestCost = INF;
+    std::vector<int> path = graph.tspBacktracking(bestCost);
+    std::cout << "Best path: ";
+    for (int i : path)
+        std::cout << i << " ";
+    std::cout << std::endl << "Path cost: " << bestCost << std::endl;
+
+
 
     return 0;
 }

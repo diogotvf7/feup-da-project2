@@ -42,7 +42,7 @@ public:
                                       double evaporationRate, double pheromoneDeposit);
 
     // Function to perform ACO with two ants in the same thread
-    void performACO(std::vector<std::vector<double>>& pheromoneTrails,
+    AntPath performACO(std::vector<std::vector<double>> &pheromoneTrails,
                            double evaporationRate, double pheromoneDeposit,
                            int numIterations, int numAnts, int ALPHA, int BETA);
 };
