@@ -1,4 +1,4 @@
-#include <algorithm>
+#include <iomanip>
 #include "../headers/Graph.h"
 
 using namespace std;
@@ -24,25 +24,24 @@ void Graph::createEdge(const int &src, const int &dest, double dist) const {
     destiny->insertEdge(origin, dist);
 }
 
-vector<int> Graph::tspBacktracking(double &bestCost) {
+Path Graph::tspBacktracking() {
     vector<int> path;
-    vector<int> bestPath;
+    Path bestPath = {{}, INF};
 
-    for (const auto &[key, node]: nodes) {
+    for (const auto &[key, node]: nodes)
         node->setVisited(false);
-    }
 
     //Node with id 0 is always our beginning and end
     Node *start = findNode(0);
     start->setVisited(true);
     path.push_back(start->getId());
-    backtrack(start, path, 0, bestPath, bestCost);
-    bestPath.push_back(0);
+    backtrack(start, path, 0, bestPath);
+    bestPath.nodes.push_back(0);
 
     return bestPath;
 }
 
-void Graph::backtrack(Node *currentNode, std::vector<int> &path, double currentCost, std::vector<int> &bestPath, double &bestCost) {
+void Graph::backtrack(Node *currentNode, std::vector<int> &path, double currentDist, Path &bestPath) {
     bool allNodesVisited = true;
     for (const auto &[key, node] : nodes) {
         if (!node->isVisited()) {
@@ -54,9 +53,9 @@ void Graph::backtrack(Node *currentNode, std::vector<int> &path, double currentC
     if (allNodesVisited && currentNode->connectedTo(0)) {
         Edge *e = currentNode->getEdge(0);
         double dist = e->getDist();
-        if ((currentCost + dist) < bestCost) {
-            bestPath = path;
-            bestCost = currentCost + dist;
+        if ((currentDist + dist) < bestPath.distance) {
+            bestPath.nodes = path;
+            bestPath.distance = currentDist + dist;
         }
     }
 
@@ -65,12 +64,11 @@ void Graph::backtrack(Node *currentNode, std::vector<int> &path, double currentC
         if (adjNode->isVisited()) continue;
         adjNode->setVisited(true);
         path.push_back(adjNode->getId());
-        backtrack(adjNode, path,currentCost + edge->getDist(), bestPath, bestCost);
+        backtrack(adjNode, path, currentDist + edge->getDist(), bestPath);
         adjNode->setVisited(false);
         path.pop_back();
     }
 }
-
 
 void Graph::prim() {
     vector<Edge*> res;
@@ -105,45 +103,155 @@ void Graph::prim() {
     }
 }
 
-void Graph::preOrderWalk(Node *node, std::vector<int> &tour) {
+void Graph::preOrderWalk(Node *node, std::vector<int> &path) {
     node->setVisited(true);
     for (Edge *edge : node->getAdj()) {
         Node *dest = edge->getDest();
         if (dest->getPath() == nullptr) continue;
         if (dest->getPath()->getSrc() == node) {
-            tour.push_back(dest->getId());
-            preOrderWalk(dest, tour);
+            path.push_back(dest->getId());
+            preOrderWalk(dest, path);
         }
     }
 }
 
-vector<int> Graph::approxTSPTour(double &cost) {
-    vector<int> tour;
+Path Graph::approxTSPTour() {
+    Path bestPath = {{}, 0};
+
     prim();
     for (const auto &[key, node] : nodes)
         node->setVisited(false);
 
-    tour.push_back(0);
-    preOrderWalk(findNode(0), tour);
-    tour.push_back(0);
+    bestPath.nodes.push_back(0);
+    preOrderWalk(findNode(0), bestPath.nodes);
+    bestPath.nodes.push_back(0);
 
-    for (int i = 0; i < (tour.size() - 1); i++){
-        double weight;
-        Edge* e = nodes[tour[i]]->getEdge(tour[i + 1]);
-        if (nodes[tour[i]]->getEdge(tour[i + 1]) == nullptr){
-             weight = nodes[tour[i]]->getCoordinate().distanceTo(nodes[tour[i + 1]]->getCoordinate());
-            int x = 0;
-        }
-        else  weight = nodes[tour[i]]->getEdge(tour[i + 1]) != nullptr ? nodes[tour[i]]->getEdge(tour[i + 1])->getDist() : nodes[tour[i]]->getCoordinate().distanceTo(nodes[tour[i + 1]]->getCoordinate());
-        cost += weight;
-    }
+    for (int i = 0; i < (bestPath.nodes.size() - 1); i++)
+        bestPath.distance += findNode(bestPath.nodes[i])->getEdge(bestPath.nodes[i + 1])->getDist();
 
-    return tour;
+    return bestPath;
 }
 
+void Graph::updatePheromoneTrails(vector<vector<double>> &pheromoneTrails, const vector<Path> &ants,
+                                         double evaporationRate, double pheromoneDeposit) {
+    for (auto &trailRow : pheromoneTrails)
+        for (auto &trail : trailRow)
+            trail *= (1.0 - evaporationRate);
 
+    for (const auto &ant : ants) {
+        double pheromoneAddition = pheromoneDeposit / ant.distance;
+        for (size_t i = 0; i < ant.nodes.size() - 1; ++i) {
+            int src = ant.nodes[i];
+            int dest = ant.nodes[i + 1];
+            pheromoneTrails[src][dest] += pheromoneAddition;
+            pheromoneTrails[dest][src] += pheromoneAddition;
+        }
+    }
+}
 
+Path Graph::aco(std::vector<std::vector<double>> &pheromoneTrails, double evaporationRate, double pheromoneDeposit,
+                int numIterations, int numAnts, int ALPHA, int BETA, std::vector<std::vector<double>> &distanceCache) {
+    random_device rd;
+    default_random_engine rng(rd());
+    uniform_real_distribution<double> distribution(0.0, 1.0);
 
+    Path bestAntPath = {{0}, DBL_MAX};
 
+    for (int iteration = 0; iteration < numIterations; ++iteration) {
+        vector<Path> ants;
+        for (int ant = 0; ant < numAnts; ++ant) {
+            Path antPath = {{0}, 0};
+
+            for (auto &[key, node] : nodes)
+                node->setVisited(false);
+
+            int currentNode = 0;
+            nodes[currentNode]->setVisited(true);
+
+            for (int i = 0; i < nodes.size() - 1; ++i) {
+                double sum = 0.0;
+                for (int j = 0; j < nodes.size(); ++j) {
+                    if (!nodes[j]->isVisited()) {
+                        sum += pow(pheromoneTrails[currentNode][j], ALPHA) *
+                               pow(1 / distanceBetween(currentNode, j, distanceCache), BETA);
+                    }
+                }
+                double random = distribution(rng);;
+                double prob = 0.0;
+                int nextNode = 0;
+                for (int j = 0; j < nodes.size(); ++j) {
+                    if (!nodes[j]->isVisited()) {
+                        prob += pow(pheromoneTrails[currentNode][j], ALPHA) *
+                                pow(1 / distanceBetween(currentNode, j, distanceCache), BETA) / sum;
+                        if (random <= prob) {
+                            nextNode = j;
+                            antPath.nodes.push_back(nextNode);
+                            break;
+                        }
+                    }
+                }
+
+                antPath.distance += distanceBetween(currentNode, nextNode, distanceCache);
+                nodes[nextNode]->setVisited(true);
+                currentNode = nextNode;
+            }
+
+            antPath.nodes.push_back(0);
+            antPath.distance += distanceBetween(currentNode, 0, distanceCache);
+            if (antPath.distance < bestAntPath.distance)
+                bestAntPath = antPath;
+            ants.push_back(antPath);
+        }
+
+        updatePheromoneTrails(pheromoneTrails, ants, evaporationRate, pheromoneDeposit);
+    }
+    return bestAntPath;
+}
+
+double Graph::distanceBetween(int src, int dest, vector<vector<double>> &distanceCache) {
+    int smaller = min(src, dest);
+    int larger = max(src, dest);
+
+    if (distanceCache[smaller][larger] != -1)
+        return distanceCache[smaller][larger];
+
+    double dist = nodes[src]->getEdge(dest)
+                  ? nodes[src]->getEdge(dest)->getDist()
+                  : nodes[src]->getCoord().distanceTo(nodes[dest]->getCoord());
+    distanceCache[smaller][larger] = dist;
+    return dist;
+}
+
+double Graph::apply2OptSwap(Path &antPath, std::vector<std::vector<double>> &distanceCache, int maxIterations) {
+    bool improved = true;
+    double initialDistance = antPath.distance;
+    while (improved && maxIterations--) {
+        improved = false;
+        double bestImprovement = 0.0;
+        int bestI = -1;
+        int bestJ = -1;
+
+        for (size_t i = 1; i < antPath.nodes.size() - 2; ++i) {
+            for (size_t j = i + 1; j < antPath.nodes.size() - 1; ++j) {
+                double improvement = distanceBetween(antPath.nodes[i - 1], antPath.nodes[j], distanceCache)
+                                     + distanceBetween(antPath.nodes[i], antPath.nodes[j + 1], distanceCache)
+                                     - distanceBetween(antPath.nodes[i - 1], antPath.nodes[i], distanceCache)
+                                     - distanceBetween(antPath.nodes[j], antPath.nodes[j + 1], distanceCache);
+                if (improvement < bestImprovement) {
+                    bestImprovement = improvement;
+                    bestI = (int) i;
+                    bestJ = (int) j;
+                }
+            }
+        }
+
+        if (bestI != -1 && bestJ != -1) {
+            reverse(antPath.nodes.begin() + bestI, antPath.nodes.begin() + bestJ + 1);
+            antPath.distance += bestImprovement;
+            improved = true;
+        }
+    }
+    return (initialDistance - antPath.distance) / initialDistance;
+}
 
 

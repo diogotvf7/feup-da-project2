@@ -52,14 +52,6 @@ std::vector<Edge*> Node::getAdj() const {
     return adj;
 }
 
-std::vector<Edge*> Node::getIncoming() const {
-    return incoming;
-}
-
-Coordinate Node::getCoordinate() const {
-    return coord;
-}
-
 void Node::setVisited(bool status) {
     this->visited = status;
 }
@@ -92,6 +84,10 @@ bool Node::operator<(Node & node) const {
     return this->dist < node.dist;
 }
 
+Coordinate Node::getCoord() const {
+    return coord;
+}
+
 /*                              Edge                              */
 
 Edge::Edge(Node* src, Node* dest, const double &dist) {
@@ -110,4 +106,12 @@ Node* Edge::getSrc() const {
 
 Node* Edge::getDest() const {
     return dest;
+}
+
+double Edge::getPheromone() const {
+    return pheromone;
+}
+
+void Edge::setPheromone(double _pheromone) {
+    this->pheromone = _pheromone;
 }
