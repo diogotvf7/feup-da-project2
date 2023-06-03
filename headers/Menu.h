@@ -18,8 +18,20 @@ class Menu {
     std::string func;
     std::string arg;
 public:
+    /**
+     * @brief Constructor for the Menu class
+     * @param paths the paths to the graphs that we might want to use
+     */
     explicit Menu(const std::vector<std::string> &paths);
+    /**
+     * @brief Funtion for reading a graph and loading it to cache
+     * @param path the path to the graph's csv
+     */
     void readGraph(const std::string &path);
+    /**
+     * @brief Function for updating the cache. As some graphs have a high quantity of nodes we limit the cache to 3 graphs at each time.
+     * The
+     */
     void updateCache(const std::string& path);
 
     void init();

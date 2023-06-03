@@ -10,29 +10,31 @@ Menu::Menu(const vector<string> &paths) {
 
 void Menu::readGraph(const string &path) {
     auto g = find(cachedGraphs.begin(), cachedGraphs.end(), path);
-    if (g != cachedGraphs.end()) return;
-    Graph *graph = new Graph();
-    // TODO verificar argumentos diferentes para ler os grafos
-    if (path.substr(0, path.find('/')) == "real-graphs") {
-        csv::readNodes(path + "nodes.csv", graph);
-        csv::readEdges(path + "edges.csv", graph);
+    if (g == cachedGraphs.end()) {
+        Graph *graph = new Graph();
+        // TODO verificar argumentos diferentes para ler os grafos
+        if (path.substr(0, path.find('/')) == "real-graphs") {
+            csv::readNodes(path + "nodes.csv", graph);
+            csv::readEdges(path + "edges.csv", graph);
+        } else if (path.substr(0, path.find('/')) == "extra-graphs")
+            csv::readEdges(path, graph, false, false);
+        else if (path.substr(path.find_last_of('/'), path.size()) == "tourism.csv")
+            csv::readEdges(path, graph, true, true);
+        else csv::readEdges(path, graph);
+        graphs[path] = graph;
     }
-    else if (path.substr(0, path.find('/')) == "extra-graphs")
-        csv::readEdges(path, graph, false, false);
-    else if (path.substr(path.find_last_of('/'), path.size()) == "tourism.csv")
-        csv::readEdges(path, graph, true, true);
-    else csv::readEdges(path, graph);
-    graphs[path] = graph;
     updateCache(path);
 }
 
 void Menu::updateCache(const string &path) {
-    auto rm = cachedGraphs.begin();
+    auto rm = find(cachedGraphs.begin(), cachedGraphs.end(), path);
     if (rm != cachedGraphs.end())
-        graphs[*rm] = nullptr;
-    if (cachedGraphs.size() > 3)
-        cachedGraphs.erase(rm);
-    cachedGraphs.push_back(path);
+        cachedGraphs.erase(rm); // remove graph from its position in cache
+    if (cachedGraphs.size() == 3) {
+        delete graphs[cachedGraphs[0]]; // delete graph memory
+        cachedGraphs.erase(cachedGraphs.begin()); // remove graph from cache
+    }
+    cachedGraphs.push_back(path); // add graph to cache
 }
 
 void Menu::init() {
@@ -97,6 +99,7 @@ bool Menu::selectGraph(const int headerIdx) {
             default:
                 readGraph(options[stoi(input) - 1]);
                 alive = displayInfo(headerIdx, options[stoi(input) - 1]);
+                options.clear();
                 break;
         }
     }
