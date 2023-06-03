@@ -27,6 +27,7 @@ public:
     bool displayInfo(int headerIdx, const std::string &path);
     void chooseACOParams(double &initialPheromones, double &evaporationRate, double &pheromoneDeposit,
                          int &numIterations, int &numAnts, int &ALPHA, int &BETA);
+    bool displayPath(const Path &path, const std::string &graphPath, int headerIdx);
 
     std::string static center(const std::string &str, int width);
     void static cleanTerminal();
