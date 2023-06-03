@@ -18,8 +18,8 @@
 #define INF INT32_MAX
 #define node_map std::unordered_map<int, Node*>
 
-struct AntPath {
-    std::vector<int> path;
+struct Path {
+    std::vector<int> nodes;
     double distance;
 };
 
@@ -45,18 +45,18 @@ public:
     /*Third Exercise*/
     // Function to update pheromone trails based on ant paths
     static void updatePheromoneTrails(std::vector<std::vector<double>>& pheromoneTrails,
-                                      const std::vector<AntPath> &ants,
+                                      const std::vector<Path> &ants,
                                       double evaporationRate, double pheromoneDeposit);
 
     // Function to perform ACO with two ants in the same thread
-    AntPath performACO(std::vector<std::vector<double>> &pheromoneTrails,
-                           double evaporationRate, double pheromoneDeposit,
-                           int numIterations, int numAnts, int ALPHA, int BETA,
-                           std::vector<std::vector<double>> &distanceCache);
+    Path performACO(std::vector<std::vector<double>> &pheromoneTrails,
+                    double evaporationRate, double pheromoneDeposit,
+                    int numIterations, int numAnts, int ALPHA, int BETA,
+                    std::vector<std::vector<double>> &distanceCache);
 
     int getRandomStartNode() const;
 
-    void apply2OptSwap(AntPath& antPath, std::vector<std::vector<double>> &distanceCache);
+    double apply2OptSwap(Path &antPath, std::vector<std::vector<double>> &distanceCache, int maxIterations = INT32_MAX);
 };
 
 /*                           Performance analysis                           */

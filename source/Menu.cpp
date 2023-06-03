@@ -112,7 +112,7 @@ bool Menu::displayInfo(const int headerIdx, const std::string &path) {
             res = measureExecutionTime(elapsedTime, *graphs[path], &Graph::approxTSPTour, dist);
             break;
         case 3:
-            // TODO
+
             break;
         default:
             return false;
@@ -134,13 +134,13 @@ bool Menu::displayInfo(const int headerIdx, const std::string &path) {
                 std::cout << '|' << center("Distance: " + std::to_string(dist), 100) << '|' << std::endl;
                 break;
             case 3:
-                // TODO
+                std::cout << '|' << center("Distance: " + std::to_string(dist), 100) << '|' << std::endl;
                 break;
         }
         std::cout << '|' << std::string(100, ' ') << '|' << std::endl
                   << '|' << std::string(100, '-') << '|' << std::endl
                   << '|' << std::string(100, ' ') << '|' << std::endl
-                  << '|' << center("1.  Show path", 100) << '|' << std::endl
+                  << '|' << center("1.  Show nodes", 100) << '|' << std::endl
                   << '|' << center("2.  Back", 100) << '|' << std::endl
                   << '|' << std::string(100, '-') << '|' << std::endl
                   << std::right << std::setw(20) << "Option: ";
@@ -151,7 +151,7 @@ bool Menu::displayInfo(const int headerIdx, const std::string &path) {
                     // TODO
                     alive = true;
                     std::cout << res.size() << std::endl;
-                    // displayPath(res, path);
+                    // displayPath(res, nodes);
                     break;
                 case 2:
                     return true;

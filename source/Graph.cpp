@@ -134,7 +134,7 @@ vector<int> Graph::approxTSPTour(double &cost) {
     return tour;
 }
 
-void Graph::updatePheromoneTrails(vector<vector<double>> &pheromoneTrails, const vector<AntPath> &ants,
+void Graph::updatePheromoneTrails(vector<vector<double>> &pheromoneTrails, const vector<Path> &ants,
                                          double evaporationRate, double pheromoneDeposit) {
     for (auto &trailRow : pheromoneTrails)
         for (auto &trail : trailRow)
@@ -142,69 +142,52 @@ void Graph::updatePheromoneTrails(vector<vector<double>> &pheromoneTrails, const
 
     for (const auto &ant : ants) {
         double pheromoneAddition = pheromoneDeposit / ant.distance;
-        for (size_t i = 0; i < ant.path.size() - 1; ++i) {
-            int src = ant.path[i];
-            int dest = ant.path[i + 1];
+        for (size_t i = 0; i < ant.nodes.size() - 1; ++i) {
+            int src = ant.nodes[i];
+            int dest = ant.nodes[i + 1];
             pheromoneTrails[src][dest] += pheromoneAddition;
             pheromoneTrails[dest][src] += pheromoneAddition;
         }
     }
 }
 
-AntPath Graph::performACO(vector<vector<double>> &pheromoneTrails, double evaporationRate, double pheromoneDeposit,
-                              int numIterations, int numAnts, int ALPHA, int BETA, vector<vector<double>> &distanceCache) {
+Path Graph::performACO(vector<vector<double>> &pheromoneTrails, double evaporationRate, double pheromoneDeposit,
+                       int numIterations, int numAnts, int ALPHA, int BETA, vector<vector<double>> &distanceCache) {
     random_device rd;
     default_random_engine rng(rd());
     uniform_real_distribution<double> distribution(0.0, 1.0);
 
-     ofstream file("/home/diogotvf7/Documents/2a2s/da/DA-Project2/aco-log.txt");
-
-    AntPath bestAntPath = {{0}, DBL_MAX};
+    Path bestAntPath = {{0}, DBL_MAX};
 
     for (int iteration = 0; iteration < numIterations; ++iteration) {
-        file << "--------------------------" << endl;
-        file << "|" << setw(13) << right <<  "Iteration " << setw(4) << left << iteration << setw(9) << right << "|" << endl;
-        file << "--------------------------" << endl;
-        vector<AntPath> ants;
+        vector<Path> ants;
         for (int ant = 0; ant < numAnts; ++ant) {
-            file << "|   Ant " << ant << endl;
-            int startNode = getRandomStartNode();
-            AntPath antPath = {{startNode}, 0};
+            Path antPath = {{0}, 0};
 
             for (auto &[key, node] : nodes)
                 node->setVisited(false);
 
-            int currentNode = startNode;
+            int currentNode = 0;
             nodes[currentNode]->setVisited(true);
 
             for (int i = 0; i < nodes.size() - 1; ++i) {
                 double sum = 0.0;
-                file << "|       Current node is: " << currentNode << endl;
                 for (int j = 0; j < nodes.size(); ++j) {
                     if (!nodes[j]->isVisited()) {
                         sum += pow(pheromoneTrails[currentNode][j], ALPHA) *
                                pow(1 / distanceBetween(currentNode, j, distanceCache), BETA);
-                        file << "|             Node " << j << " is available, dist is: " << distanceBetween(currentNode, j, distanceCache) << endl;
                     }
                 }
                 double random = distribution(rng);;
                 double prob = 0.0;
                 int nextNode = 0;
-                file << "|       Random number is: " << random << endl;
                 for (int j = 0; j < nodes.size(); ++j) {
                     if (!nodes[j]->isVisited()) {
                         prob += pow(pheromoneTrails[currentNode][j], ALPHA) *
                                 pow(1 / distanceBetween(currentNode, j, distanceCache), BETA) / sum;
-                        file << "|             Prob for node " << j << " is: " << prob << endl;
                         if (random <= prob) {
                             nextNode = j;
-                            antPath.path.push_back(nextNode);
-                            file << "|                  Picked node:    " << nextNode << endl;
-                            file << "|                  Added distance: " << distanceBetween(currentNode, nextNode, distanceCache) << endl;
-                            file << "|                  Path:";
-                            for (const int &node : antPath.path)
-                                file << " " << node;
-                            file << endl << endl;
+                            antPath.nodes.push_back(nextNode);
                             break;
                         }
                     }
@@ -215,14 +198,8 @@ AntPath Graph::performACO(vector<vector<double>> &pheromoneTrails, double evapor
                 currentNode = nextNode;
             }
 
-            file <<  "   Ant: " << setw(3) << right << ant << "   Distance: " << antPath.distance
-                 << endl;
-            if (antPath.distance == 0) {
-
-            }
-
-            antPath.path.push_back(startNode);
-            antPath.distance += distanceBetween(currentNode, startNode, distanceCache);
+            antPath.nodes.push_back(0);
+            antPath.distance += distanceBetween(currentNode, 0, distanceCache);
             if (antPath.distance < bestAntPath.distance)
                 bestAntPath = antPath;
             ants.push_back(antPath);
@@ -230,9 +207,6 @@ AntPath Graph::performACO(vector<vector<double>> &pheromoneTrails, double evapor
 
         updatePheromoneTrails(pheromoneTrails, ants, evaporationRate, pheromoneDeposit);
     }
-
-     file.close();
-
     return bestAntPath;
 }
 
@@ -255,27 +229,24 @@ double Graph::distanceBetween(int src, int dest, vector<vector<double>> &distanc
                   ? nodes[src]->getEdge(dest)->getDist()
                   : nodes[src]->getCoord().distanceTo(nodes[dest]->getCoord());
     distanceCache[smaller][larger] = dist;
-
-    cout << "Distance between " << src << " and " << dest << " is " << dist << endl;
-
     return dist;
 }
 
-void Graph::apply2OptSwap(AntPath& antPath, vector<vector<double>> &distanceCache) {
+double Graph::apply2OptSwap(Path &antPath, std::vector<std::vector<double>> &distanceCache, int maxIterations) {
     bool improved = true;
-
-    while (improved) {
+    double initialDistance = antPath.distance;
+    while (improved && maxIterations--) {
         improved = false;
         double bestImprovement = 0.0;
         int bestI = -1;
         int bestJ = -1;
 
-        for (size_t i = 1; i < antPath.path.size() - 2; ++i) {
-            for (size_t j = i + 1; j < antPath.path.size() - 1; ++j) {
-                double improvement = distanceBetween(antPath.path[i - 1], antPath.path[j], distanceCache)
-                                     + distanceBetween(antPath.path[i], antPath.path[j + 1], distanceCache)
-                                     - distanceBetween(antPath.path[i - 1], antPath.path[i], distanceCache)
-                                     - distanceBetween(antPath.path[j], antPath.path[j + 1], distanceCache);
+        for (size_t i = 1; i < antPath.nodes.size() - 2; ++i) {
+            for (size_t j = i + 1; j < antPath.nodes.size() - 1; ++j) {
+                double improvement = distanceBetween(antPath.nodes[i - 1], antPath.nodes[j], distanceCache)
+                                     + distanceBetween(antPath.nodes[i], antPath.nodes[j + 1], distanceCache)
+                                     - distanceBetween(antPath.nodes[i - 1], antPath.nodes[i], distanceCache)
+                                     - distanceBetween(antPath.nodes[j], antPath.nodes[j + 1], distanceCache);
                 if (improvement < bestImprovement) {
                     bestImprovement = improvement;
                     bestI = (int) i;
@@ -285,11 +256,12 @@ void Graph::apply2OptSwap(AntPath& antPath, vector<vector<double>> &distanceCach
         }
 
         if (bestI != -1 && bestJ != -1) {
-            reverse(antPath.path.begin() + bestI, antPath.path.begin() + bestJ + 1);
+            reverse(antPath.nodes.begin() + bestI, antPath.nodes.begin() + bestJ + 1);
             antPath.distance += bestImprovement;
             improved = true;
         }
     }
+    return (initialDistance - antPath.distance) / initialDistance;
 }
 
 
