@@ -55,7 +55,7 @@ void MutablePriorityQueue::heapifyDown(unsigned i) {
     set(i, x);
 }
 
-void MutablePriorityQueue::set(unsigned i, Node * x) {
+void MutablePriorityQueue::set(unsigned i, Node *x) {
     H[i] = x;
     x->setQueueIndex(i);
 }
