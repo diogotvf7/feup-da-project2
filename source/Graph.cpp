@@ -104,14 +104,14 @@ void Graph::prim() {
     }
 }
 
-void Graph::preOrderWalk(Node *node, vector<int> &tour) {
+void Graph::preOrderWalk(Node *node, std::vector<int> &path) {
     node->setVisited(true);
     for (Edge *edge : node->getAdj()) {
         Node *dest = edge->getDest();
         if (dest->getPath() == nullptr) continue;
         if (dest->getPath()->getSrc() == node) {
-            tour.push_back(dest->getId());
-            preOrderWalk(dest, tour);
+            path.push_back(dest->getId());
+            preOrderWalk(dest, path);
         }
     }
 }
@@ -208,14 +208,6 @@ Path Graph::aco(std::vector<std::vector<double>> &pheromoneTrails, double evapor
     }
     return bestAntPath;
 }
-
-int Graph::getRandomStartNode() const {
-    random_device rd;
-    default_random_engine rng(rd());
-    uniform_int_distribution<int> distribution(0, (int) nodes.size() - 1);
-    return distribution(rng);
-}
-
 
 double Graph::distanceBetween(int src, int dest, vector<vector<double>> &distanceCache) {
     int smaller = min(src, dest);

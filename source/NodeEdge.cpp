@@ -52,10 +52,6 @@ std::vector<Edge*> Node::getAdj() const {
     return adj;
 }
 
-std::vector<Edge*> Node::getIncoming() const {
-    return incoming;
-}
-
 void Node::setVisited(bool status) {
     this->visited = status;
 }
@@ -90,10 +86,6 @@ bool Node::operator<(Node & node) const {
 
 Coordinate Node::getCoord() const {
     return coord;
-}
-
-void Node::setCoord(Coordinate _coord) {
-    this->coord = _coord;
 }
 
 /*                              Edge                              */

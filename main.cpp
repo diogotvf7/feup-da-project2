@@ -114,54 +114,5 @@ int main() {
 
 //    runIntermediateGraphsEx2(paths);
 //    runIntermediateGraphsEx3(paths);
-    /*fstream file("/home/diogotvf7/Documents/2a2s/da/DA-Project2/dataset/real-graphs/graph1/results.txt", ios::app);
-    file << fixed << setprecision(0);
-    double initialPheromones = 0.03, evaporationRate = 0.1, pheromoneDeposit = 1;
-    int numIterations = 200, numAnts = 15, ALPHA = 2, BETA = 1;
-    double elapsedTime;
-    Graph *graph = new Graph();
-    csv::readNodes("real-graphs/graph1/nodes.csv", graph);
-    csv::readEdges("real-graphs/graph1/edges.csv", graph);
-    vector<vector<double>> distanceCache(graph->getNodes().size(), vector<double>(graph->getNodes().size(), -1));
-    vector<vector<double>> pheromoneTrails(graph->getNodes().size(), vector<double>(graph->getNodes().size(), initialPheromones));
-    Path bestPath = measureExecutionTime(elapsedTime, *graph, &Graph::aco, pheromoneTrails, evaporationRate, pheromoneDeposit, numIterations, numAnts, ALPHA, BETA, distanceCache);
-    file << "---------- Real graph1 ----------" << endl;*/
-/*    double cost;
-    vector<int> nodes = measureExecutionTime(elapsedTime, *graph, &Graph::approxTSPTour, cost);
-    file << "Executing approxTSP" << endl
-         << setw(30) << left << "Elapsed time (ms): " << elapsedTime << endl
-         << setw(30) << left << "Path:";
-    for (int i = 0; i < nodes.size(); i++) {
-        file << " " << nodes[i];
-        if (i % 30 == 0 && i > 0 && i + 1 < nodes.size())
-            file << endl << setw(30) << right << ' ';
-    }
-    file << endl << setw(30) << left << "Path total distance: " << cost
-         << endl << endl;*/
-
-    /*file << "Executing ACO with " << numAnts << " ants for " << numIterations << " iterations" << endl
-         << setw(30) << left << "Elapsed time (ms): " << elapsedTime << endl
-         << setw(30) << left << "Path:";
-    for (int i = 0; i < bestPath.nodes.size(); i++) {
-        file << " " << bestPath.nodes[i];
-        if (i % 30 == 0 && i > 0 && i + 1 < bestPath.nodes.size())
-            file << endl << setw(30) << right << ' ';
-    }
-    file << endl << setw(30) << left << "Path total distance: " << bestPath.distance
-         << endl << endl;
-
-    double enhancement = measureExecutionTime(elapsedTime, *graph, &Graph::apply2OptSwap, bestPath, distanceCache, 20);
-    file << "Executing 2-opt swap" << endl
-         << setw(30) << left << "Elapsed time (ms): " << elapsedTime << endl
-         << setw(30) << left << "Path after 2-opt:";
-    for (int i = 0; i < bestPath.nodes.size(); i++) {
-        file << " " << bestPath.nodes[i];
-        if (i % 30 == 0 && i > 0 && i + 1 < bestPath.nodes.size())
-            file << endl << setw(30) << right << ' ';
-    }
-    file << endl << setw(30) << left << "Path total distance: " << bestPath.distance << " (" << enhancement * 100 << "%)"
-         << endl << endl;
-
-    delete graph;*/
     return 0;
 }
