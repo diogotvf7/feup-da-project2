@@ -25,6 +25,8 @@ public:
     void init();
     bool selectGraph(int headerIdx);
     bool displayInfo(int headerIdx, const std::string &path);
+    void chooseACOParams(double &initialPheromones, double &evaporationRate, double &pheromoneDeposit,
+                         int &numIterations, int &numAnts, int &ALPHA, int &BETA);
 
     std::string static center(const std::string &str, int width);
     void static cleanTerminal();

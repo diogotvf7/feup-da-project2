@@ -24,10 +24,9 @@ void Graph::createEdge(const int &src, const int &dest, double dist) const {
     destiny->insertEdge(origin, dist);
 }
 
-vector<int> Graph::tspBacktracking(double &bestCost) {
+Path Graph::tspBacktracking() {
     vector<int> path;
-    vector<int> bestPath;
-    bestCost = INF;
+    Path bestPath = {{}, INF};
 
     for (const auto &[key, node]: nodes)
         node->setVisited(false);
@@ -37,13 +36,13 @@ vector<int> Graph::tspBacktracking(double &bestCost) {
     start->setVisited(true);
     path.push_back(start->getId());
 
-    backtrack(start, path, 0, bestPath, bestCost);
-    bestPath.push_back(0);
+    backtrack(start, path, 0, bestPath);
+    bestPath.nodes.push_back(0);
 
     return bestPath;
 }
 
-void Graph::backtrack(Node *currentNode, vector<int> &path, double currentCost, vector<int> &bestPath, double &bestCost) {
+void Graph::backtrack(Node *currentNode, std::vector<int> &path, double currentDist, Path &bestPath) {
     bool allNodesVisited = true;
     for (const auto &[key, node] : nodes) {
         if (!node->isVisited()) {
@@ -55,9 +54,9 @@ void Graph::backtrack(Node *currentNode, vector<int> &path, double currentCost, 
     if (allNodesVisited && currentNode->connectedTo(0)) {
         Edge *e = currentNode->getEdge(0);
         double dist = e->getDist();
-        if ((currentCost + dist) < bestCost) {
-            bestPath = path;
-            bestCost = currentCost + dist;
+        if ((currentDist + dist) < bestPath.distance) {
+            bestPath.nodes = path;
+            bestPath.distance = currentDist + dist;
         }
     }
 
@@ -66,7 +65,7 @@ void Graph::backtrack(Node *currentNode, vector<int> &path, double currentCost, 
         if (adjNode->isVisited()) continue;
         adjNode->setVisited(true);
         path.push_back(adjNode->getId());
-        backtrack(adjNode, path,currentCost + edge->getDist(), bestPath, bestCost);
+        backtrack(adjNode, path, currentDist + edge->getDist(), bestPath);
         adjNode->setVisited(false);
         path.pop_back();
     }
@@ -117,21 +116,21 @@ void Graph::preOrderWalk(Node *node, vector<int> &tour) {
     }
 }
 
-vector<int> Graph::approxTSPTour(double &cost) {
-    cost = 0;
-    vector<int> tour;
+Path Graph::approxTSPTour() {
+    Path bestPath = {{}, 0};
+
     prim();
     for (const auto &[key, node] : nodes)
         node->setVisited(false);
 
-    tour.push_back(0);
-    preOrderWalk(findNode(0), tour);
-    tour.push_back(0);
+    bestPath.nodes.push_back(0);
+    preOrderWalk(findNode(0), bestPath.nodes);
+    bestPath.nodes.push_back(0);
 
-    for (int i = 0; i < (tour.size() - 1); i++)
-        cost += findNode(tour[i])->getEdge(tour[i + 1])->getDist();
+    for (int i = 0; i < (bestPath.nodes.size() - 1); i++)
+        bestPath.distance += findNode(bestPath.nodes[i])->getEdge(bestPath.nodes[i + 1])->getDist();
 
-    return tour;
+    return bestPath;
 }
 
 void Graph::updatePheromoneTrails(vector<vector<double>> &pheromoneTrails, const vector<Path> &ants,
@@ -151,8 +150,8 @@ void Graph::updatePheromoneTrails(vector<vector<double>> &pheromoneTrails, const
     }
 }
 
-Path Graph::performACO(vector<vector<double>> &pheromoneTrails, double evaporationRate, double pheromoneDeposit,
-                       int numIterations, int numAnts, int ALPHA, int BETA, vector<vector<double>> &distanceCache) {
+Path Graph::aco(std::vector<std::vector<double>> &pheromoneTrails, double evaporationRate, double pheromoneDeposit,
+                int numIterations, int numAnts, int ALPHA, int BETA, std::vector<std::vector<double>> &distanceCache) {
     random_device rd;
     default_random_engine rng(rd());
     uniform_real_distribution<double> distribution(0.0, 1.0);

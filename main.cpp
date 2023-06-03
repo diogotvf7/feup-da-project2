@@ -22,7 +22,7 @@ void runIntermediateGraphsEx3(const vector<string> &paths) {
         csv::readEdges(path, graph, false);
         vector<vector<double>> distanceCache(graph->getNodes().size(), vector<double>(graph->getNodes().size(), -1));
         vector<vector<double>> pheromoneTrails(graph->getNodes().size(), vector<double>(graph->getNodes().size(), initialPheromones));
-        Path bestPath = measureExecutionTime(elapsedTime, *graph, &Graph::performACO, pheromoneTrails, evaporationRate, pheromoneDeposit, numIterations, numAnts, ALPHA, BETA, distanceCache);
+        Path bestPath = measureExecutionTime(elapsedTime, *graph, &Graph::aco, pheromoneTrails, evaporationRate, pheromoneDeposit, numIterations, numAnts, ALPHA, BETA, distanceCache);
         file << "---------- " << path.substr(path.find_last_of('/') + 1, path.size()) << " ----------" << endl
              << "Executing ACO with " << numAnts << " ants for " << numIterations << " iterations" << endl
              << setw(30) << left << "Elapsed time (ms): " << elapsedTime << endl
@@ -77,7 +77,7 @@ void printDistanceCache(const vector<vector<double>> &distanceCache, const std::
 }
 
 int main() {
-/*    vector<string> paths = {
+    vector<string> paths = {
             "toy-graphs/shipping.csv",
             "toy-graphs/stadiums.csv",
             "toy-graphs/tourism.csv",
@@ -97,9 +97,9 @@ int main() {
             "real-graphs/graph3/",
             };
     Menu menu = Menu(paths);
-    menu.init();*/
+    menu.init();
 
-    vector<string> paths = {"extra-graphs/edges_25.csv",
+    /*vector<string> paths = {"extra-graphs/edges_25.csv",
                             "extra-graphs/edges_50.csv",
                             "extra-graphs/edges_75.csv",
                             "extra-graphs/edges_100.csv",
@@ -110,11 +110,11 @@ int main() {
                             "extra-graphs/edges_600.csv",
                             "extra-graphs/edges_700.csv",
                             "extra-graphs/edges_800.csv",
-                            "extra-graphs/edges_900.csv"};
+                            "extra-graphs/edges_900.csv"};*/
 
 //    runIntermediateGraphsEx2(paths);
 //    runIntermediateGraphsEx3(paths);
-    fstream file("/home/diogotvf7/Documents/2a2s/da/DA-Project2/dataset/real-graphs/graph1/results.txt", ios::app);
+    /*fstream file("/home/diogotvf7/Documents/2a2s/da/DA-Project2/dataset/real-graphs/graph1/results.txt", ios::app);
     file << fixed << setprecision(0);
     double initialPheromones = 0.03, evaporationRate = 0.1, pheromoneDeposit = 1;
     int numIterations = 200, numAnts = 15, ALPHA = 2, BETA = 1;
@@ -124,8 +124,8 @@ int main() {
     csv::readEdges("real-graphs/graph1/edges.csv", graph);
     vector<vector<double>> distanceCache(graph->getNodes().size(), vector<double>(graph->getNodes().size(), -1));
     vector<vector<double>> pheromoneTrails(graph->getNodes().size(), vector<double>(graph->getNodes().size(), initialPheromones));
-    Path bestPath = measureExecutionTime(elapsedTime, *graph, &Graph::performACO, pheromoneTrails, evaporationRate, pheromoneDeposit, numIterations, numAnts, ALPHA, BETA, distanceCache);
-    file << "---------- Real graph1 ----------" << endl;
+    Path bestPath = measureExecutionTime(elapsedTime, *graph, &Graph::aco, pheromoneTrails, evaporationRate, pheromoneDeposit, numIterations, numAnts, ALPHA, BETA, distanceCache);
+    file << "---------- Real graph1 ----------" << endl;*/
 /*    double cost;
     vector<int> nodes = measureExecutionTime(elapsedTime, *graph, &Graph::approxTSPTour, cost);
     file << "Executing approxTSP" << endl
@@ -139,7 +139,7 @@ int main() {
     file << endl << setw(30) << left << "Path total distance: " << cost
          << endl << endl;*/
 
-    file << "Executing ACO with " << numAnts << " ants for " << numIterations << " iterations" << endl
+    /*file << "Executing ACO with " << numAnts << " ants for " << numIterations << " iterations" << endl
          << setw(30) << left << "Elapsed time (ms): " << elapsedTime << endl
          << setw(30) << left << "Path:";
     for (int i = 0; i < bestPath.nodes.size(); i++) {
@@ -162,6 +162,6 @@ int main() {
     file << endl << setw(30) << left << "Path total distance: " << bestPath.distance << " (" << enhancement * 100 << "%)"
          << endl << endl;
 
-    delete graph;
+    delete graph;*/
     return 0;
 }

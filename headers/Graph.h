@@ -34,13 +34,13 @@ public:
     double distanceBetween(int src, int dest, std::vector<std::vector<double>> &cache);
 
     /*First Exercise*/
-    std::vector<int> tspBacktracking(double &bestCost);
-    void backtrack(Node *currentNode, std::vector<int> &path, double currentCost, std::vector<int> &bestPath, double &bestCost);
+    Path tspBacktracking();
+    void backtrack(Node *currentNode, std::vector<int> &path, double currentDist, Path &bestPath);
 
     /*Second Exercise*/
     void prim();
     void preOrderWalk(Node *node, std::vector<int> &tour);
-    std::vector<int> approxTSPTour(double &cost);
+    Path approxTSPTour();
 
     /*Third Exercise*/
     // Function to update pheromone trails based on ant paths
@@ -49,10 +49,10 @@ public:
                                       double evaporationRate, double pheromoneDeposit);
 
     // Function to perform ACO with two ants in the same thread
-    Path performACO(std::vector<std::vector<double>> &pheromoneTrails,
-                    double evaporationRate, double pheromoneDeposit,
-                    int numIterations, int numAnts, int ALPHA, int BETA,
-                    std::vector<std::vector<double>> &distanceCache);
+    Path aco(std::vector<std::vector<double>> &pheromoneTrails,
+             double evaporationRate, double pheromoneDeposit,
+             int numIterations, int numAnts, int ALPHA, int BETA,
+             std::vector<std::vector<double>> &distanceCache);
 
     int getRandomStartNode() const;
 
