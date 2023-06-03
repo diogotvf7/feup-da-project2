@@ -5,7 +5,7 @@ using namespace std;
 Menu::Menu(const vector<string> &paths) {
     for (auto &path : paths)
         graphs.emplace(path, nullptr);
-    headers = {"", "Backtracking", "Triangular Approximation", "Our heuristic"};
+    headers = {"", "Backtracking", "Triangular Approximation", "Ant Colony Approximation"};
 }
 
 void Menu::readGraph(const string &path) {
@@ -44,7 +44,7 @@ void Menu::init() {
                   << '|' << string(100, '-') << '|' << endl
                   << '|' << center("1.  Solve TSP using backtracking", 100) << '|' << endl
                   << '|' << center("2.  Solve TSP using triangular approximation heuristic", 100) << '|' << endl
-                  << '|' << center("3.  Solve TSP using our heuristic", 100) << '|' << endl
+                  << '|' << center("3.  Solve TSP using Ant Colony Optimization", 100) << '|' << endl
                   << '|' << center("4.  Exit", 100) << '|' << endl
                   << '|' << string(100, '-') << '|' << endl
                   << setw(20) << right << "Option: ";
@@ -105,9 +105,10 @@ bool Menu::selectGraph(const int headerIdx) {
 
 bool Menu::displayInfo(const int headerIdx, const string &path) {
     /*vector<int> res;*/
-    Path res;
-    double elapsedTime, initialPheromones = 0.03, evaporationRate = 0.1, pheromoneDeposit = 1;
-    int numIterations = 75, numAnts = 10, ALPHA = 1, BETA = 1;
+    Path res, res2 = {{-1}, -1};
+    double elapsedTime, elapsedTime2, initialPheromones = 0.03, evaporationRate = 0.1, pheromoneDeposit = 1, enhancement2Opt;
+    int numIterations = 75, numAnts = 10, ALPHA = 1, BETA = 1, iterations2Opt = -1;
+    vector<vector<double>> distanceCache(graphs[path]->getNodes().size(), vector<double>(graphs[path]->getNodes().size(), -1));
     switch (headerIdx) {
         case 1:
             res = measureExecutionTime(elapsedTime, *graphs[path], &Graph::tspBacktracking);
@@ -117,7 +118,6 @@ bool Menu::displayInfo(const int headerIdx, const string &path) {
             break;
         case 3:
             chooseACOParams(initialPheromones, evaporationRate, pheromoneDeposit, numIterations, numAnts, ALPHA, BETA);
-            vector<vector<double>> distanceCache(graphs[path]->getNodes().size(), vector<double>(graphs[path]->getNodes().size(), -1));
             vector<vector<double>> pheromoneTrails(graphs[path]->getNodes().size(), vector<double>(graphs[path]->getNodes().size(), initialPheromones));
             res = measureExecutionTime(elapsedTime, *graphs[path], &Graph::aco, pheromoneTrails, evaporationRate, pheromoneDeposit, numIterations, numAnts, ALPHA, BETA, distanceCache);
             break;
@@ -127,41 +127,52 @@ bool Menu::displayInfo(const int headerIdx, const string &path) {
     while (alive) {
         cleanTerminal();
         cout << '|' << string(100, '-') << '|' << endl
-                  << '|' << center(headers[headerIdx] + " for " + path, 100) << '|' << endl
-                  << '|' << string(100, ' ') << '|' << endl
-                  << '|' << string(100, '-') << '|' << endl
-                  << '|' << string(100, ' ') << '|' << endl
-                  << '|' << center("Execution time: " + to_string(elapsedTime) + "ms", 100) << '|' << endl
-                  << '|' << center("Best distance: " + to_string(res.distance), 100) << '|' << endl
-                  << '|' << string(100, ' ') << '|' << endl
-                  << '|' << string(100, '-') << '|' << endl
-                  << '|' << string(100, ' ') << '|' << endl
-                  << '|' << center("1.  Show nodes", 100) << '|' << endl
-                  << '|' << center("2.  Apply 2-opt", 100) << '|' << endl
-                  << '|' << center("3.  Back", 100) << '|' << endl
-                  << '|' << center("4.  Menu", 100) << '|' << endl
-                  << '|' << string(100, '-') << '|' << endl
-                  << right << setw(20) << "Option: ";
+             << '|' << center(headers[headerIdx] + " for " + path, 100) << '|' << endl
+             << '|' << string(100, ' ') << '|' << endl
+             << '|' << string(100, '-') << '|' << endl
+             << '|' << string(100, ' ') << '|' << endl
+             << '|' << center(headers[headerIdx] + " execution time: " + to_string(elapsedTime) + " ms", 100) << '|' << endl
+             << '|' << center("Distance: " + to_string(res.distance), 100) << '|' << endl;
+        if (res2.distance != -1)
+            cout << '|' << string(100, ' ') << '|' << endl
+                 << '|' << center("2-opt execution time: " + to_string(elapsedTime2) + " ms", 100) << '|' << endl
+                 << "|" << center("Distance after 2-opt : " + to_string(res2.distance), 100) << '|' << endl
+                 << "|" << center("2-opt enhancement: " + to_string(enhancement2Opt * 100) + "%", 100) << '|' << endl;
+        cout << '|' << string(100, ' ') << '|' << endl
+             << '|' << string(100, '-') << '|' << endl
+             << '|' << string(100, ' ') << '|' << endl;
+        if (res2.distance != -1)
+            cout << '|'  << center("0. Show nodes after 2-opt", 100) << '|' << endl;
+        cout << '|' << center("1.  Show nodes", 100) << '|' << endl
+             << '|' << center("2.  Apply 2-opt", 100) << '|' << endl
+             << '|' << center("3.  Back", 100) << '|' << endl
+             << '|' << center("4.  Menu", 100) << '|' << endl
+             << '|' << string(100, '-') << '|' << endl
+             << right << setw(20) << "Option: ";
         cin >> input;
-        while (true) {
-            switch (stoi(input)) {
-                case 1:
-                    // TODO
-                    alive = true;
-                    // displayPath(res, nodes);
+        switch (stoi(input)) {
+            case 1:
+                alive = displayPath(res, path, headerIdx);
+                break;
+            case 2:
+                cout << "Number of iterations (-1 for max iterations): ";
+                cin >> iterations2Opt;
+                res2 = res;
+                enhancement2Opt = measureExecutionTime(elapsedTime2, *graphs[path], &Graph::apply2OptSwap, res2, distanceCache, iterations2Opt);
+                break;
+            case 3:
+                return true;
+            case 4:
+                return false;
+            case 0:
+                if (res2.distance != -1) {
+                    alive = displayPath(res2, path, headerIdx);
                     break;
-                case 2:
-                    // TODO apply 2 opt over result
-                    break;
-                case 3:
-                    return true;
-                case 4:
-                    return false;
-                default:
-                    cout << "Invalid option!" << endl;
-                    cin >> input;
-                    break;
-            }
+                }
+            default:
+                cout << "Invalid option!" << endl;
+                cin >> input;
+                break;
         }
     }
     return false;
@@ -232,6 +243,50 @@ void Menu::chooseACOParams(double &initialPheromones, double &evaporationRate, d
             default:
                 cout << "Invalid option!" << endl;
                 break;
+        }
+    }
+}
+
+bool Menu::displayPath(const Path &path, const string &graphPath, int headerIdx) {
+    while (true) {
+        cleanTerminal();
+        cout << fixed << setprecision(0);
+        cout << '|' << string(100, '-') << '|' << endl
+             << '|' << center("Path for " + headers[headerIdx] + " for graph: " + graphPath, 100) << '|' << endl
+             << '|' << string(100, ' ') << '|' << endl
+             << '|' << string(100, '-') << '|' << endl
+             << '|' << string(100, ' ') << '|' << endl
+             << setw(11) << left << "|";
+        for (int i = 0; i < path.nodes.size(); ++i) {
+            cout << setw(5) << left << path.nodes[i];
+            if (i != path.nodes.size() - 1) cout << "-> ";
+            else cout << string(8 * (10 - path.nodes.size() % 10) + 13, ' ') << '|';
+            if ((i + 1) % 10 == 0 && i != 0) {
+                cout << setw(11) << right << "|" << endl
+                     << setw(11) << left << "|";
+            }
+        }
+        cout << endl
+             << '|' << string(100, '-') << '|' << endl
+             << '|' << center("Distance: " + to_string(path.distance), 100) << '|' << endl
+             << '|' << string(100, '-') << '|' << endl
+             << '|' << string(100, ' ') << '|' << endl
+             << '|' << center("1.  Back", 100) << '|' << endl
+             << '|' << center("2.  Menu", 100) << '|' << endl
+             << '|' << string(100, '-') << '|' << endl
+             << right << setw(20) << "Option: ";
+        cin >> input;
+        while (true) {
+            switch (stoi(input)) {
+                case 1:
+                    return true;
+                case 2:
+                    return false;
+                default:
+                    cout << "Invalid option!" << endl;
+                    cin >> input;
+                    break;
+            }
         }
     }
 }
