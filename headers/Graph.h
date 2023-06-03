@@ -31,6 +31,7 @@ public:
     void addNode(Node *node);
     node_map getNodes() const;
     void createEdge(const int &src, const int &dest, double dist) const;
+    double distanceBetween(int src, int dest, std::vector<std::vector<double>> &cache);
 
     /*First Exercise*/
     std::vector<int> tspBacktracking(double &bestCost);
@@ -50,7 +51,12 @@ public:
     // Function to perform ACO with two ants in the same thread
     AntPath performACO(std::vector<std::vector<double>> &pheromoneTrails,
                            double evaporationRate, double pheromoneDeposit,
-                           int numIterations, int numAnts, int ALPHA, int BETA);
+                           int numIterations, int numAnts, int ALPHA, int BETA,
+                           std::vector<std::vector<double>> &distanceCache);
+
+    int getRandomStartNode() const;
+
+    void apply2OptSwap(AntPath& antPath, std::vector<std::vector<double>> &distanceCache);
 };
 
 /*                           Performance analysis                           */

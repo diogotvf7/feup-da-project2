@@ -103,11 +103,10 @@ bool Menu::selectGraph(const int headerIdx) {
 
 bool Menu::displayInfo(const int headerIdx, const std::string &path) {
     std::vector<int> res;
-    double elapsedTime;
-    double dist = 0, bestDist = INF;
+    double elapsedTime, dist;
     switch (headerIdx) {
         case 1:
-            res = measureExecutionTime(elapsedTime, *graphs[path], &Graph::tspBacktracking, bestDist);
+            res = measureExecutionTime(elapsedTime, *graphs[path], &Graph::tspBacktracking, dist);
             break;
         case 2:
             res = measureExecutionTime(elapsedTime, *graphs[path], &Graph::approxTSPTour, dist);
@@ -129,7 +128,7 @@ bool Menu::displayInfo(const int headerIdx, const std::string &path) {
                   << '|' << center("Execution time: " + std::to_string(elapsedTime) + "ms", 100) << '|' << std::endl;
         switch (headerIdx) {
             case 1:
-                std::cout << '|' << center("Best distance: " + std::to_string(bestDist), 100) << '|' << std::endl;
+                std::cout << '|' << center("Best distance: " + std::to_string(dist), 100) << '|' << std::endl;
                 break;
             case 2:
                 std::cout << '|' << center("Distance: " + std::to_string(dist), 100) << '|' << std::endl;
