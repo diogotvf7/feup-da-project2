@@ -35,7 +35,8 @@ public:
     /**
      * @brief Function for finding a node in the graph
      * @param idNode the id of the node we want to find
-     * Complexity: O(1) as it uses an unordered_map and all keys are unique
+     * @par Complexity:
+     *      Complexity: O(1) as it uses an unordered_map and all keys are unique
      * @return the node with the given id
      */
     Node *findNode(const int &idNode) const;
@@ -73,7 +74,8 @@ public:
     Path tspBacktracking();
     /**
      * @brief Function that performs the backtracking approach for solving the TSP in a graph
-     * Complexity: O(n!) where n is the number of nodes. This high complexity is due to the fact that this algorithm has to calculate every possible permutation of the nodes in the graph.
+     * @par Complexity:
+     *      Complexity: O(n!) where n is the number of nodes. This high complexity is due to the fact that this algorithm has to calculate every possible permutation of the nodes in the graph.
      * @param currentNode the current node
      * @param path the path that is being built
      * @param currentDist the current distance of the path
@@ -84,20 +86,23 @@ public:
     /*Second Exercise*/
     /**
      * @brief Function that performs the Prim's algorithm for finding the minimum spanning tree of a graph
-     * Complexity: O((V + E) log V) where E is the number of edges and V is the number of vertices.
+     * @par Complexity:
+     *      Complexity: O((V + E) log V) where E is the number of edges and V is the number of vertices.
      * @return returns the minimum spanning tree
      */
     void prim();
     /**
      * @brief Function that performs the pre-order walk of a tree
-     * Complexity: O(V + E) where V is the number of vertices and E is the number of edges. This complexity is due to the fact that this algorithm has to visit every node and, in the worst case, every edge in the tree.
+     * @par Complexity:
+     *      Complexity: O(V + E) where V is the number of vertices and E is the number of edges. This complexity is due to the fact that this algorithm has to visit every node and, in the worst case, every edge in the tree.
      * @param node the current node
      * @param path the path that is being built
      */
     void preOrderWalk(Node *node, std::vector<int> &path);
     /**
      * @brief Function that performs the triangular approximation algorithm for solving the TSP in a graph
-     * Complexity: O((V + E) log V) + O(V + E) + O(V) which is equivalent to O((V + E) log V) where V is the number of vertices and E is the number of edges. This complexity is due to the fact that this algorithm uses Prim's algorithm to find the minimum spanning tree and then it uses the pre-order walk to find the path.
+     * @par Complexity:
+     *      Complexity: O((V + E) log V) + O(V + E) + O(V) which is equivalent to O((V + E) log V) where V is the number of vertices and E is the number of edges. This complexity is due to the fact that this algorithm uses Prim's algorithm to find the minimum spanning tree and then it uses the pre-order walk to find the path.
      * @return returns the path with the minimum distance
      */
     Path approxTSPTour();
@@ -105,7 +110,8 @@ public:
     /*Third Exercise*/
     /**
      * @brief Function that updates the pheromone trails of the graph
-     * Complexity: O((E^2) + (A * N)) where A is the number of ants, N is the number of nodes and E is the number of edges of the graph. This complexity is due to the fact that this algorithm has to update the pheromone trails for every ant and that for every edge of the graph the pheromones evaporation must be applied.
+     * @par Complexity:
+     *      Complexity: O((E^2) + (A * N)) where A is the number of ants, N is the number of nodes and E is the number of edges of the graph. This complexity is due to the fact that this algorithm has to update the pheromone trails for every ant and that for every edge of the graph the pheromones evaporation must be applied.
      * @param pheromoneTrails the pheromone trails of the graph
      * @param ants the ants that are currently in the graph
      * @param evaporationRate the evaporation rate of the pheromones
@@ -117,7 +123,8 @@ public:
 
     /**
      * @brief Function that performs the ant colony optimization algorithm for solving the TSP in a graph
-     * Complexity: O(I * A * (N^2 + (E^2 + A * N))) where I is the number of iterations, A is the number of ants, N is the number of nodes and E is the number of edges of the graph. This complexity is due to the fact for every iteration, each ant has to build a path (this action may, in the worst case, iterate through every node twice, hence the N²) and also has to update the pheromone trails (this action has a complexity of E² + A * N).
+     * @par Complexity:
+     *      Complexity: O(I * A * (N^2 + (E^2 + A * N))) where I is the number of iterations, A is the number of ants, N is the number of nodes and E is the number of edges of the graph. This complexity is due to the fact for every iteration, each ant has to build a path (this action may, in the worst case, iterate through every node twice, hence the N²) and also has to update the pheromone trails (this action has a complexity of E² + A * N).
      * @param pheromoneTrails the pheromone trails of the graph
      * @param evaporationRate the evaporation rate of the pheromones
      * @param pheromoneDeposit the amount of pheromones that are deposited in the pheromone trails
@@ -135,7 +142,8 @@ public:
 
     /**
      * @brief Function that performs the 2 optimization swap algorithm for improving a path presented as a TSP solution
-     * Complexity: O(I * N²) where I is the number of iterations and N is the number of nodes. This complexity is due to the fact that for every iteration, the algorithm has to iterate through every node twice (hence the N²).
+     * @par Complexity:
+     *      Complexity: O(I * N²) where I is the number of iterations and N is the number of nodes. This complexity is due to the fact that for every iteration, the algorithm has to iterate through every node twice (hence the N²).
      * @param antPath the path to be improved
      * @param distanceCache the cache that stores the distances between nodes
      * @param maxIterations the maximum number of iterations of the algorithm, -1 if there is no limit
