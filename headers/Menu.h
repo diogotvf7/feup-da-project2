@@ -25,7 +25,7 @@ public:
      */
     explicit Menu(const std::vector<std::string> &paths);
     /**
-     * @brief Funtion for reading a graph and loading it to cache
+     * @brief Function for reading a graph and loading it to cache
      * @param path the path to the graph's csv
      */
     void readGraph(const std::string &path);

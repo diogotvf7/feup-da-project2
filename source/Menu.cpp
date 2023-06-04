@@ -12,7 +12,6 @@ void Menu::readGraph(const string &path) {
     auto g = find(cachedGraphs.begin(), cachedGraphs.end(), path);
     if (g == cachedGraphs.end()) {
         Graph *graph = new Graph();
-        // TODO verificar argumentos diferentes para ler os grafos
         if (path.substr(0, path.find('/')) == "real-graphs") {
             csv::readNodes(path + "nodes.csv", graph);
             csv::readEdges(path + "edges.csv", graph);
@@ -82,51 +81,19 @@ bool Menu::selectGraph(const int headerIdx) {
                   << '|' << string(100, ' ') << '|' << endl
                   << '|' << string(100, '-') << '|' << endl;
 
-        switch (headerIdx) {
-            case 1:
-            {
-                std::regex pattern("^toy-graphs/");
-                for (auto &graph : graphs) {
-                    if (regex_search(graph.first,pattern)){
-                        options.push_back(graph.first);
-                        cout << right << setw(25) << ' ' << to_string(i++) + "." << setw(3) << ' ' << graph.first << endl;
-                    }
-                }
-                break;
-            }
-            case 2:
-            {
-                std::regex pattern("^(extra-graphs/|real-graphs/|toy-graphs/tourism.csv|toy-graphs/stadiums.csv)");
-                for (auto &graph : graphs) {
-                    if (regex_search(graph.first,pattern)){
-                        options.push_back(graph.first);
-                        cout << right << setw(25) << ' ' << to_string(i++) + "." << setw(3) << ' ' << graph.first << endl;
-                    }
-                }
-                break;
-            }
-            case 3:
-            {
-                std::regex pattern("/shipping\\.csv");
-                for (auto &graph : graphs) {
-                        if (!regex_search(graph.first,pattern)) {
-                            options.push_back(graph.first);
-                            cout << right << setw(25) << ' ' << to_string(i++) + "." << setw(3) << ' ' << graph.first
-                                 << endl;
-                        }
-                }
-            }
-        }
 
-        /*
+        std::regex pattern;
+        if (headerIdx == 1) pattern = regex("^toy-graphs/");
+        else if (headerIdx == 2) pattern = regex("^(extra-graphs/|real-graphs/|toy-graphs/tourism.csv|toy-graphs/stadiums.csv)");
+        else if (headerIdx == 3) pattern = regex("^(?!.*\\/shipping\\.csv).*$");
         for (auto &graph : graphs) {
-            options.push_back(graph.first);
-            cout << right << setw(25) << ' ' << to_string(i++) + "." << setw(3) << ' ' << graph.first << endl;
+            if (regex_search(graph.first,pattern)) {
+                options.push_back(graph.first);
+                cout << right << setw(25) << ' ' << to_string(i++) + "." << setw(3) << ' ' << graph.first << endl;
+            }
         }
-         */
 
-
-         cout << '|' << right << setw(24) << ' ' << "0.   Exit" << endl
+        cout << '|' << right << setw(24) << ' ' << "0.   Exit" << endl
                    << '|' << string(100, ' ') << '|' << endl
                    << '|' << string(100, '-') << '|' << endl
                    << right << setw(20) << "Option: ";
@@ -151,19 +118,17 @@ bool Menu::displayInfo(const int headerIdx, const string &path) {
     double elapsedTime, elapsedTime2, initialPheromones = 0.03, evaporationRate = 0.1, pheromoneDeposit = 1, enhancement2Opt;
     int numIterations = 75, numAnts = 10, ALPHA = 1, BETA = 1, iterations2Opt = -1;
     vector<vector<double>> distanceCache(graphs[path]->getNodes().size(), vector<double>(graphs[path]->getNodes().size(), -1));
-    switch (headerIdx) {
-        case 1:
-            res = measureExecutionTime(elapsedTime, *graphs[path], &Graph::tspBacktracking);
-            break;
-        case 2:
-            res = measureExecutionTime(elapsedTime, *graphs[path], &Graph::approxTSPTour);
-            break;
-        case 3:
-            chooseACOParams(initialPheromones, evaporationRate, pheromoneDeposit, numIterations, numAnts, ALPHA, BETA);
-            vector<vector<double>> pheromoneTrails(graphs[path]->getNodes().size(), vector<double>(graphs[path]->getNodes().size(), initialPheromones));
-            res = measureExecutionTime(elapsedTime, *graphs[path], &Graph::aco, pheromoneTrails, evaporationRate, pheromoneDeposit, numIterations, numAnts, ALPHA, BETA, distanceCache);
-            break;
+
+    if (headerIdx == 1)
+        res = measureExecutionTime(elapsedTime, *graphs[path], &Graph::tspBacktracking);
+    else if (headerIdx == 2)
+        res = measureExecutionTime(elapsedTime, *graphs[path], &Graph::approxTSPTour);
+    else if (headerIdx == 3) {
+        chooseACOParams(initialPheromones, evaporationRate, pheromoneDeposit, numIterations, numAnts, ALPHA, BETA);
+        vector<vector<double>> pheromoneTrails(graphs[path]->getNodes().size(), vector<double>(graphs[path]->getNodes().size(), initialPheromones));
+        res = measureExecutionTime(elapsedTime, *graphs[path], &Graph::aco, pheromoneTrails, evaporationRate, pheromoneDeposit, numIterations, numAnts, ALPHA, BETA, distanceCache);
     }
+
     cout << fixed << setprecision(0);
     bool alive = true;
     while (alive) {

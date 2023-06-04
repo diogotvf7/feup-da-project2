@@ -4,10 +4,6 @@ project(DA-Project2)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(DA-Project2
-        .vscode/tasks.json
-        dataset/Toy-Graphs/shipping.csv
-        dataset/Toy-Graphs/stadiums.csv
-        dataset/Toy-Graphs/tourism.csv
         dataset/real-graphs/graph1/nodes.csv
         dataset/real-graphs/graph1/edges.csv
         dataset/real-graphs/graph2/nodes.csv
@@ -37,4 +33,5 @@ add_executable(DA-Project2
         source/Coordinate.cpp
         headers/MutablePriorityQueue.h
         source/MutablePriorityQueue.cpp
-        headers/Menu.h source/Menu.cpp)
+        headers/Menu.h
+        source/Menu.cpp)
