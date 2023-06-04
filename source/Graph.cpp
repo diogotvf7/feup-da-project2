@@ -240,6 +240,7 @@ double Graph::apply2OptSwap(Path &antPath, std::vector<std::vector<double>> &dis
                                      + distanceBetween(antPath.nodes[i], antPath.nodes[j + 1], distanceCache)
                                      - distanceBetween(antPath.nodes[i - 1], antPath.nodes[i], distanceCache)
                                      - distanceBetween(antPath.nodes[j], antPath.nodes[j + 1], distanceCache);
+
                 if (improvement < bestImprovement) {
                     bestImprovement = improvement;
                     bestI = (int) i;
