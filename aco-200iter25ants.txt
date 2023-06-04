@@ -1,6 +1,6 @@
 ---------- Intermediate Graphs Results ----------
-Initial pheromones: 0
-Evaporation rate: 0
+Initial pheromones: 0.03
+Evaporation rate: 0.1
 Pheromone deposit: 1
 Number of iterations: 200
 Number of ants: 25
