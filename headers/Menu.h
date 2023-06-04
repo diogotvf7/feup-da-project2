@@ -7,6 +7,7 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
+#include <regex>
 #include "Graph.h"
 #include "csv.h"
 

@@ -82,10 +82,49 @@ bool Menu::selectGraph(const int headerIdx) {
                   << '|' << string(100, ' ') << '|' << endl
                   << '|' << string(100, '-') << '|' << endl;
 
+        switch (headerIdx) {
+            case 1:
+            {
+                std::regex pattern("^toy-graphs/");
+                for (auto &graph : graphs) {
+                    if (regex_search(graph.first,pattern)){
+                        options.push_back(graph.first);
+                        cout << right << setw(25) << ' ' << to_string(i++) + "." << setw(3) << ' ' << graph.first << endl;
+                    }
+                }
+                break;
+            }
+            case 2:
+            {
+                std::regex pattern("^(extra-graphs/|real-graphs/|toy-graphs/tourism.csv|toy-graphs/stadiums.csv)");
+                for (auto &graph : graphs) {
+                    if (regex_search(graph.first,pattern)){
+                        options.push_back(graph.first);
+                        cout << right << setw(25) << ' ' << to_string(i++) + "." << setw(3) << ' ' << graph.first << endl;
+                    }
+                }
+                break;
+            }
+            case 3:
+            {
+                std::regex pattern("/shipping\\.csv");
+                for (auto &graph : graphs) {
+                        if (!regex_search(graph.first,pattern)) {
+                            options.push_back(graph.first);
+                            cout << right << setw(25) << ' ' << to_string(i++) + "." << setw(3) << ' ' << graph.first
+                                 << endl;
+                        }
+                }
+            }
+        }
+
+        /*
         for (auto &graph : graphs) {
             options.push_back(graph.first);
             cout << right << setw(25) << ' ' << to_string(i++) + "." << setw(3) << ' ' << graph.first << endl;
         }
+         */
+
 
          cout << '|' << right << setw(24) << ' ' << "0.   Exit" << endl
                    << '|' << string(100, ' ') << '|' << endl

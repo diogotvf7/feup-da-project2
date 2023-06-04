@@ -125,9 +125,12 @@ Path Graph::approxTSPTour() {
     bestPath.nodes.push_back(0);
     preOrderWalk(findNode(0), bestPath.nodes);
     bestPath.nodes.push_back(0);
-
-    for (int i = 0; i < (bestPath.nodes.size() - 1); i++)
-        bestPath.distance += findNode(bestPath.nodes[i])->getEdge(bestPath.nodes[i + 1])->getDist();
+    vector<vector<double>> v;
+    for (int i = 0; i < (bestPath.nodes.size() - 1); i++){
+        if(findNode(bestPath.nodes[i])->getEdge(bestPath.nodes[i + 1]) == nullptr) bestPath.distance += findNode(bestPath.nodes[i])->getCoord().distanceTo(
+                    findNode(bestPath.nodes[i + 1])->getCoord());
+        else bestPath.distance += findNode(bestPath.nodes[i])->getEdge(bestPath.nodes[i + 1])->getDist();
+    }
 
     return bestPath;
 }

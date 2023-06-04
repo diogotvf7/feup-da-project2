@@ -10,7 +10,7 @@ using namespace std;
 
 
 void runIntermediateGraphsEx3(const vector<string> &paths) {
-    ofstream file("/home/diogotvf7/Documents/2a2s/da/DA-Project2/intermediate-graphs-results-ex3.txt");
+    ofstream file("intermediate-graphs-results-ex3.txt");
     file << fixed << setprecision(0);
 
     double initialPheromones = 0.03, evaporationRate = 0.1, pheromoneDeposit = 1;
