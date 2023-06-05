@@ -9,17 +9,17 @@
 using namespace std;
 
 
-void runIntermediateGraphsEx3(const vector<string> &paths) {
+void runAco(const vector<string> &paths) {
 
     double initialPheromones = 0.03,
            evaporationRate = 0.1,
            pheromoneDeposit = 1;
-    int numIterations = 200,
-        numAnts = 25,
+    int numIterations = 500,
+        numAnts = 3,
         ALPHA = 2,
         BETA = 1;
 
-    ofstream file("aco-" + to_string(numIterations) + "iter" + to_string(numAnts) + "ants.txt");
+    ofstream file("aco-extra-graphs-" + to_string(numIterations) + "iter" + to_string(numAnts) + "ants.txt");
     file << fixed << setprecision(0);
 
     file << "---------- Intermediate Graphs Results ----------" << endl;
@@ -49,9 +49,11 @@ void runIntermediateGraphsEx3(const vector<string> &paths) {
         file << endl << setw(30) << left << "Path total distance: " << bestPath.distance
              << endl << endl;
 
-        if (stoi(path.substr(path.find_last_of('_') + 1, path.find_last_of('.'))) <= 200) {
+        int nNodes = stoi(path.substr(path.find_last_of('_') + 1, path.find_last_of('.')));
+
+        if (nNodes <= 1000) {
             double enhancement = measureExecutionTime(elapsedTime, *graph, &Graph::apply2OptSwap, bestPath,
-                                                      distanceCache, 250);
+                                                      distanceCache, 1000000 / nNodes);
             file << "Executing 2-opt swap" << endl
                  << setw(30) << left << "Elapsed time (ms): " << elapsedTime << endl
                  << setw(30) << left << "Path after 2-opt:";
@@ -117,19 +119,20 @@ int main() {
     Menu menu = Menu(paths);
     menu.init();
 
-//    vector<string> paths2 = {"extra-graphs/edges_25.csv",
-//                             "extra-graphs/edges_50.csv",
-//                             "extra-graphs/edges_75.csv",
-//                             "extra-graphs/edges_100.csv",
-//                             "extra-graphs/edges_200.csv",
-//                             "extra-graphs/edges_300.csv",
-//                             "extra-graphs/edges_400.csv",
-//                             "extra-graphs/edges_500.csv",
-//                             "extra-graphs/edges_600.csv",
-//                             "extra-graphs/edges_700.csv",
-//                             "extra-graphs/edges_800.csv",
-//                             "extra-graphs/edges_900.csv"};
-//    runIntermediateGraphsEx3(paths2);
+    vector<string> paths2 = {"extra-graphs/edges_25.csv",
+                             "extra-graphs/edges_50.csv",
+                             "extra-graphs/edges_75.csv",
+                             "extra-graphs/edges_100.csv",
+                             "extra-graphs/edges_200.csv",
+                             "extra-graphs/edges_300.csv",
+                             "extra-graphs/edges_400.csv",
+                             "extra-graphs/edges_500.csv",
+                             "extra-graphs/edges_600.csv",
+                             "extra-graphs/edges_700.csv",
+                             "extra-graphs/edges_800.csv",
+                             "extra-graphs/edges_900.csv"
+    };
+    runAco(paths2);
 
     return 0;
 }

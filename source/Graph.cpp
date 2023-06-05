@@ -179,7 +179,7 @@ Path Graph::aco(std::vector<std::vector<double>> &pheromoneTrails, double evapor
                                pow(1 / distanceBetween(currentNode, j, distanceCache), BETA);
                     }
                 }
-                double random = distribution(rng);;
+                double random = distribution(rng);
                 double prob = 0.0;
                 int nextNode = 0;
                 for (int j = 0; j < nodes.size(); ++j) {
